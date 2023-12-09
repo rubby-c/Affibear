@@ -1,0 +1,41 @@
+{
+  "name": "affibear",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 1337 --experimental-https",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "patch-package"
+  },
+  "dependencies": {
+    "@chakra-ui/next-js": "^2.2.0",
+    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/theme-tools": "^2.1.2",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "axios": "^1.6.1",
+    "browser-or-node": "^2.1.1",
+    "chakra-multiselect": "^0.4.6",
+    "dayjs": "^1.11.10",
+    "echarts-for-react": "^3.0.2",
+    "framer-motion": "^10.16.4",
+    "highlight.js": "^11.9.0",
+    "next": "^14.0.2",
+    "patch-package": "^8.0.0",
+    "react": "^18.2.0",
+    "react-cookie": "^6.1.1",
+    "react-date-range": "^1.4.0",
+    "react-dom": "^18.2.0",
+    "react-drag-drop-files": "^2.3.10",
+    "react-email-editor": "^1.7.9",
+    "react-icons": "^4.11.0",
+    "react-turnstile": "^1.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "20.9.0",
+    "eslint": "^8",
+    "eslint-config-next": "^14.0.2"
+  }
+}

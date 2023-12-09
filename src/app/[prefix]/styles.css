@@ -1,0 +1,38 @@
+:root {
+    --bg: #f7fafc;
+}
+
+.goog-te-gadget {
+    color: transparent !important;
+    margin-bottom: -16px;
+    user-select: none;
+}
+
+body {
+    top: 0 !important;
+}
+
+.goog-te-gadget div select {
+    font-family: var(--ck-fonts-body);
+    box-shadow: var(--ck-shadows-md);
+    appearance: none;
+
+    text-align: center;
+    text-align-last: center;
+
+    border-radius: 15px;
+    padding: 8px;
+    color: black !important;
+}
+
+option {
+    text-align: left;
+}
+
+.skiptranslate iframe {
+    display: none;
+}
+
+.goog-te-gadget span a {
+    display: none !important;
+}
