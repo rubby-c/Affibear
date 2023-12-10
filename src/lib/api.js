@@ -7,7 +7,7 @@ export const Production = false;
 
 // This is like this because of local vs browser requests on production.
 const Api = axios.create({
-    baseURL: isNode ? 'https://127.0.0.1:1338' : 'https://api.affibear.com',
+    baseURL: isNode ? 'https://127.0.0.1:1338' : 'https://api.affibear.test',
     httpsAgent: new https.Agent({
 
         rejectUnauthorized: false // CHANGE

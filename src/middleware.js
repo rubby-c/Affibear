@@ -15,7 +15,7 @@ export async function middleware(req) {
     const host = req.headers.get('host');
     const subdomain = GetSubdomain(host);
 
-    console.log(host);
+    // console.log(host);
 
     if (SUBDOMAIN_BLACKLIST.includes(subdomain) || subdomain === null) {
         return;
