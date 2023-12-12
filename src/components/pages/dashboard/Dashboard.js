@@ -76,8 +76,8 @@ function GetStats(x, range) {
             _productsSold += stats[x].orders[y].products.length;
 
             for (let z = 0; z < stats[x].orders[y].products.length; z++) {
-                _revenueGross += stats[x].orders[y].products[z].total;
-                _revenueNet += stats[x].orders[y].products[z].total - stats[x].orders[z].commission ?? 0;
+                _revenueGross += stats[x].orders[y].products[z].total === 0 ? stats[x].orders[z].commission : stats[x].orders[y].products[z].total;
+                _revenueNet += stats[x].orders[y].products[z].total === 0 ? stats[x].orders[z].commission : stats[x].orders[y].products[z].total - stats[x].orders[z].commission ?? 0;
             }
         }
     }

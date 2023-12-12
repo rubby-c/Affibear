@@ -23,14 +23,14 @@ import {
     useToast,
     Tag,
     Popover,
-    PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow
+    PopoverTrigger, PopoverContent, PopoverHeader, PopoverBody, PopoverArrow, Select
 } from '@chakra-ui/react'
 
 import {
     FaArrowRight,
     FaEnvelope,
     FaPlus,
-    FaTrash,
+    FaTrash, FaUser,
     FaWrench
 } from "react-icons/fa";
 
@@ -44,9 +44,10 @@ import Api from "@/lib/api";
 import TitleCard from "@/components/elements/TitleCard";
 import TitleOption from "@/components/elements/TitleOption";
 import { TOAST_OPTIONS } from "@/lib/constants";
-import { GetNumber } from "@/lib/helpers";
+import {GetCurrency, GetNumber} from "@/lib/helpers";
 import SearchBar from "@/components/elements/SearchBar";
 import NoSsr from "@/components/helpers/NoSsr";
+import {BsEnvelope} from "react-icons/bs";
 
 const Affiliates = ({ data }) => {
     const router = useRouter();
@@ -62,9 +63,12 @@ const Affiliates = ({ data }) => {
             name: '',
             email: '',
             password: '',
+            ignoreProducts: false,
             promos: true
         },
         invite: {
+            templates: [],
+            templateId: '',
             name: '',
             email: ''
         },
@@ -105,6 +109,7 @@ const Affiliates = ({ data }) => {
             });
         }
     }
+
     async function DeleteAffiliate(id) {
         const res = await Api.delete(`/website/affiliates?id=${id}`);
 
@@ -130,17 +135,64 @@ const Affiliates = ({ data }) => {
     const [search, setSearch] = React.useState('');
 
     React.useEffect(() => {
-        const arr = list.filter(i => i.name.toLowerCase().includes(search.toLowerCase()));
+        const query = search.toLowerCase();
+
+        const arr = list.filter(i => i.name.toLowerCase().includes(query) || i.coupon.toLowerCase().includes(query));
         setResults(arr);
     }, [search]);
 
+    async function InviteAffiliate() {
+        if (state.invite.templateId === '' || state.invite.name === '' || state.invite.email === '')
+            return;
+
+        const res = await Api.post('/website/invite-affiliate', {
+            templateId: state.invite.templateId,
+            name: state.invite.name,
+            email: state.invite.email
+        });
+
+        if (res.status === 200) {
+            setState({ ...state, invite: { ...state.invite, name: '', email: '' }});
+
+            toast({
+                title: 'Success',
+                status: 'success',
+                description: `You have invited ${state.invite.name}.`
+            });
+        } else {
+            toast({
+                status: 'error',
+                title: 'Couldn\'t invite an affiliate.',
+                description: res.data.status ?? res.data
+            })
+        }
+    }
+
     return (
         <>
-            <TitleCard icon={<BiUser/>} title='Affiliates' item={<HStack>
-                <Button size='sm' leftIcon={<FaEnvelope/>} onClick={invite.onOpen}>Invite</Button>
+            <TitleCard icon={<BiUser />} title='Affiliates' item={<HStack>
+                <Button size='sm' leftIcon={<FaEnvelope/>} onClick={async () => {
+                    const res = await Api.get('/website/email-templates');
+
+                    const defaults = res.data.find(i => i.name === 'Default Affiliate Invitation');
+                    if (defaults !== undefined) {
+                        setState({
+                            ...state,
+                            invite: {
+                                ...state.invite,
+                                templateId: defaults.id,
+                                templates: res.data.map(i => ({ id: i.id, name: i.name }))
+                            }
+                        });
+                    } else {
+                        setState({ ...state, invite: { ...state.invite, templates: res.data.map(i => ({ id: i.id, name: i.name }))}});
+                    }
+
+                    invite.onOpen();
+                }}>Invite</Button>
                 <Button size='sm' leftIcon={<FaPlus/>} onClick={add.onOpen}>Manual Add</Button>
             </HStack>}>
-                <SearchBar state={search} setState={setSearch} />
+                <SearchBar placeholder='Search by name or coupon..' state={search} setState={setSearch} />
 
                 {results.length > 0 ? <TableContainer>
                         <Table my={4} variant='simple'>
@@ -161,18 +213,23 @@ const Affiliates = ({ data }) => {
 
                                     return (
                                         <Tr key={idx}>
-                                            <Td>{item.name}</Td>
+                                            <Td>
+                                                <HStack spacing={3}>
+                                                    <Text>{item.name}</Text>
+                                                    <Tag fontWeight='medium'>{item.coupon}</Tag>
+                                                </HStack>
+                                            </Td>
                                             <Td>{stats.clicks}</Td>
                                             <Td>{stats.conversions}</Td>
                                             <Td>
                                                 <NoSsr>
-                                                    {GetNumber(stats.revenue)}
+                                                    {GetNumber(stats.commissions)}
                                                 </NoSsr>
                                             </Td>
 
                                             <Td>
                                                 <HStack>
-                                                    <Text>{item.commissions.amount}{item.commissions.type === 0 ? '%' : '$'}</Text>
+                                                    <Text>{item.commissions.amount}{item.commissions.type === 0 ? '%' : GetCurrency()}</Text>
                                                     <Tag>{item.commissions.type === 0 ? 'Percentage' : 'Fixed'}</Tag>
                                                 </HStack>
                                             </Td>
@@ -211,10 +268,15 @@ const Affiliates = ({ data }) => {
                     : search.length > 0 ? <Text>No results could be found.</Text> : <Text>You don&apos;t have any affiliates.</Text>}
             </TitleCard>
 
-            <EasyModal title='Invite Affiliate' isOpen={invite.isOpen} onClose={invite.onClose}
-                       footer={<Text mt={4}>You can <Link as={NextLink} href='#'>customize your email</Link> template.</Text>}>
-                <VStack w='100%' alignItems='stretch'>
-                    <TitleOption title='Full Name'>
+            <EasyModal icon={BsEnvelope} title='Invite affiliates' isOpen={invite.isOpen} onClose={invite.onClose}>
+                <VStack w='100%' alignItems='stretch' spacing={4}>
+                    <TitleOption title='Template' subtitle='Invitation emails only support the {AFFILIATE_NAME} variable.'>
+                        <Select placeholder='Select a template' value={state.invite.templateId} onChange={e => setState({ ...state, invite: { ...state.invite, templateId: e.target.value }})}>
+                            {state.invite.templates.map((template, idx) => <option key={idx} value={template.id}>{template.name}</option>)}
+                        </Select>
+                    </TitleOption>
+
+                    <TitleOption title='Full Name' subtitle='Leave empty if you do not have a {AFFILIATE_NAME} variable set up in your email template.'>
                         <Input value={state.invite.name} placeholder='John Doe'
                                onChange={e => setState({...state, invite: {...state.invite, name: e.target.value}})}/>
                     </TitleOption>
@@ -222,9 +284,9 @@ const Affiliates = ({ data }) => {
                     <TitleOption title='Email'>
                         <InputGroup>
                             <Input value={state.invite.email} placeholder='example@email.com'
-                                   onChange={e => setState({...state, email: {...state.email, name: e.target.value}})}/>
+                                   onChange={e => setState({ ...state, invite: { ...state.invite, email: e.target.value }})}/>
 
-                            <InputRightAddon as={Button} rightIcon={<FaArrowRight/>}>
+                            <InputRightAddon onClick={InviteAffiliate} as={Button} rightIcon={<FaArrowRight/>}>
                                 Send
                             </InputRightAddon>
                         </InputGroup>
@@ -232,10 +294,10 @@ const Affiliates = ({ data }) => {
                 </VStack>
             </EasyModal>
 
-            <EasyModal title='Add Affiliate' isOpen={add.isOpen} onClose={add.onClose}
-                       footer={<Button onClick={AddAffiliate} leftIcon={<FaPlus/>}>Add</Button>}>
-                <VStack w='100%' alignItems='stretch'>
-                    <TitleOption title='Full Name'>
+            <EasyModal icon={FaUser} title='Create affiliate' isOpen={add.isOpen} onClose={add.onClose}
+                       footer={<Button onClick={AddAffiliate} leftIcon={<FaPlus/>}>Create</Button>}>
+                <VStack spacing={4} w='100%' alignItems='stretch'>
+                    <TitleOption title='Name'>
                         <Input value={state.affiliate.name} placeholder='John Doe'
                                onChange={e => setState({
                                    ...state,
@@ -259,6 +321,15 @@ const Affiliates = ({ data }) => {
                                })}/>
                     </TitleOption>
 
+                    <TitleOption title='Ignore Products'
+                                 subtitle='Product-specific commission rates override set affiliate commission rates.'>
+                        <Checkbox isChecked={state.affiliate.ignoreProducts}
+                                  onChange={e => setState({
+                                      ...state,
+                                      affiliate: { ...state.affiliate, ignoreProducts: e.target.checked }
+                                  })}>Enabled</Checkbox>
+                    </TitleOption>
+
                     <TitleOption title='Promotional emails'
                                  subtitle='Send your affiliates emails about discounts and sales.'>
                         <Checkbox isChecked={state.affiliate.promos}
@@ -280,19 +351,18 @@ function GetStats(data) {
 
     let clicks = 0;
     let conversions = 0;
-    let revenue = 0;
+    let commissions = 0;
 
     for (let i = 0; i < data.length; i++) {
         clicks += data[i].clicks;
         conversions += data[i].orders.length;
-        revenue += data[i].orders
-            .reduce((a, b) => a + b.products.reduce((x, y) => x + y.total, 0), 0);
+        commissions += data[i].orders.reduce((a, b) => a + b.commission, 0);
     }
 
     return {
         clicks,
         conversions,
-        revenue
+        commissions
     };
 }
 

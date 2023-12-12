@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-import IfElse from "../../helpers/IfElse";
 
 import {
     Box, Button,
@@ -63,7 +62,6 @@ const SidebarContent = ({ payouts, pc, isDisabled }) => {
 
                 <NavButton icon={BsPercent} href='/dashboard/commissions'>Commissions</NavButton>
                 <NavButton icon={BiScreenshot} href='/dashboard/pages'>Pages</NavButton>
-                <NavButton icon={BiSolidCoupon} href='/dashboard/coupons'>Coupons</NavButton>
                 <NavButton icon={BsEnvelope} href='/dashboard/emails'>Emails</NavButton>
             </VStack>
         </Box>

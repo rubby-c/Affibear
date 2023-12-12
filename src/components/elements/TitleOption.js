@@ -7,7 +7,7 @@ const TitleOption = ({ w, sub, title, subtitle, category, children }) => {
             {category && <Text mb={4} fontSize={18} fontWeight='bold'>{category}</Text>}
 
             <Text fontSize={sub ? 14: 16} fontWeight='medium' mb={subtitle ? 0 : 2}>{title}</Text>
-            {subtitle && <Text fontSize={sub ? 12 : 14} mb={2}>{subtitle}</Text>}
+            {typeof subtitle === 'string' ? <Text fontSize={sub ? 12 : 14} mb={2}>{subtitle}</Text> : subtitle}
 
             {children}
         </Box>

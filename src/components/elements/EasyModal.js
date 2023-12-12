@@ -1,15 +1,18 @@
 import React from 'react';
-import { Modal, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text } from "@chakra-ui/react";
+import {HStack, Icon, Modal, ModalCloseButton, ModalContent, ModalFooter, ModalOverlay, Text} from "@chakra-ui/react";
 import {IsString} from "@/lib/helpers";
 
-const EasyModal = ({ title, isOpen, onClose, footer, size, children }) => {
+const EasyModal = ({ icon, title, isOpen, onClose, footer, size, children }) => {
     return (
         <Modal size={size} isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent mx={4} color='black' p={4}>
                 {onClose && <ModalCloseButton />}
 
-                {IsString(title) ? <Text mb={4} fontWeight='medium' fontSize={20}>{title}</Text> : title}
+                <HStack mb={4} spacing={3}>
+                    <Icon fontSize={20} as={icon} />
+                    {IsString(title) ? <Text fontWeight='medium' fontSize={20}>{title}</Text> : title}
+                </HStack>
 
                 {children}
 

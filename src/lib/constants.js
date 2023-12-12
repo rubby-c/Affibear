@@ -2,7 +2,7 @@ export const SDK = "const shop=\"[shop_id]\";async function initialize(){console
 
 export const TOAST_OPTIONS = {
     position: 'top',
-    duration: 9000,
+    duration: 2000,
     isClosable: true
 };
 

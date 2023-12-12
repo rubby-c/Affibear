@@ -42,6 +42,7 @@ import {FaPencil, FaRankingStar, FaX} from "react-icons/fa6";
 import {BsEnvelope} from "react-icons/bs";
 import {MultiSelect} from "chakra-multiselect";
 import {GetPlural} from "@/lib/helpers";
+import {GrTemplate} from "react-icons/gr";
 
 const config = {
     safeHtml: true,
@@ -120,6 +121,10 @@ const Emails = ({ _data }) => {
     }
 
     function CreateTemplate() {
+        if (state.name.length === 0 || state.title.length === 0) {
+            return;
+        }
+
         editor.exportHtml(async (result) => {
             const res = await Api.post('/website/email-templates', {
                 name: state.name,
@@ -138,7 +143,12 @@ const Emails = ({ _data }) => {
                 });
 
                 setState({
-                    name: ''
+                    id: '',
+                    favorite: false,
+                    name: '',
+                    title: '',
+                    data: '',
+                    html: ''
                 });
 
                 modal.onClose();
@@ -153,6 +163,10 @@ const Emails = ({ _data }) => {
     }
 
     function EditTemplate() {
+        if (state.name.length === 0 || state.title.length === 0) {
+            return;
+        }
+
         editor.exportHtml(async (result) => {
             const res = await Api.patch('/website/email-templates', {
                 id: state.id,
@@ -246,7 +260,7 @@ const Emails = ({ _data }) => {
     return (
         <>
             <TitleCard icon={<BsEnvelope/>} title='Emails' item={
-                <Button leftIcon={<FaPlus/>} onClick={modal.onOpen}>Create Template</Button>
+                <Button leftIcon={<GrTemplate/>} onClick={modal.onOpen}>Create Template</Button>
             }>
                 <IfElse boolean={data.length > 0}>
                     <TableContainer>
@@ -279,7 +293,7 @@ const Emails = ({ _data }) => {
                                             }} leftIcon={<FaWrench />} size='sm'>Edit</Button>
 
                                             <Button onClick={async () => {
-                                                const res = await Api.get('/website/emails');
+                                                const res = await Api.get('/website/affiliate-emails');
 
                                                 setSendState({
                                                     ...sendState,
@@ -319,11 +333,7 @@ const Emails = ({ _data }) => {
                 </IfElse>
             </TitleCard>
 
-            <EasyModal title={<TitleOption title='Template Name'>
-                    <Input variant='flushed' value={state.name}
-                           onChange={(e) => setState({...state, name: e.target.value})}
-                           placeholder='Test Email Campaign'/>
-                </TitleOption>} size='6xl' isOpen={modal.isOpen}
+            <EasyModal icon={GrTemplate} title='Create a Template' size='6xl' isOpen={modal.isOpen}
                        onClose={() => {
                            modal.onClose();
 
@@ -335,10 +345,16 @@ const Emails = ({ _data }) => {
                            });
                        }}
                        footer={<IfElse boolean={view === 'create'}>
-                               <Button onClick={CreateTemplate} leftIcon={<FaPlus/>}>Create</Button>
+                               <Button onClick={CreateTemplate} leftIcon={<FaPlus/>}>Create Template</Button>
                                <Button onClick={EditTemplate} leftIcon={<Icon as={FaCheck} mr={1}/>}>Save Template</Button>
                            </IfElse>}>
-                <VStack mt={4} spacing={4} alignItems='stretch'>
+                <VStack spacing={4} alignItems='stretch'>
+                    <TitleOption title='Template Name' subtitle='Private identifier for this template'>
+                        <Input variant='flushed' value={state.name}
+                               onChange={(e) => setState({...state, name: e.target.value})}
+                               placeholder='Test Email Campaign'/>
+                    </TitleOption>
+
                     <HStack w='100%' spacing={4}>
                         <TitleOption w='100%' title='Email Title' subtitle='* You can use variables in here!'>
                             <Input value={state.title} onChange={(e) => setState({...state, title: e.target.value})}
@@ -436,7 +452,7 @@ const Emails = ({ _data }) => {
                 </VStack>
             </EasyModal>
 
-            <EasyModal title='Send Template' isOpen={sendState.open} onClose={() => setSendState({ ...sendState, open: false, emails: [], templateId: null, affiliates: [] })}
+            <EasyModal icon={BsEnvelope} title='Send Template' isOpen={sendState.open} onClose={() => setSendState({ ...sendState, open: false, emails: [], templateId: null, affiliates: [] })}
                        footer={<Button onClick={SendTemplate} colorScheme='brand' rightIcon={<Icon as={FaArrowRight} ml={1} />}>Send Emails</Button>}>
                 <TitleOption title='Send to:'>
                     <MultiSelect value={sendState.affiliates}

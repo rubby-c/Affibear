@@ -48,11 +48,11 @@ import {
 import {
     FaArrowLeft,
     FaArrowRight, FaCalendar, FaCalendarAlt, FaCheck,
-    FaChevronLeft, FaDollarSign, FaEdit, FaPencilAlt, FaPlus,
+    FaChevronLeft, FaCrown, FaDollarSign, FaEdit, FaInfoCircle, FaPencilAlt, FaPlus,
     FaRegCopy, FaShoppingBasket,
     FaTrash, FaWrench
 } from "react-icons/fa";
-import {FaPencil, FaX} from 'react-icons/fa6'
+import {FaInfo, FaPencil, FaX} from 'react-icons/fa6'
 import { LuMousePointerClick } from "react-icons/lu";
 
 import TitleCard from "@/components/elements/TitleCard";
@@ -63,7 +63,15 @@ import IfElse from "@/components/helpers/IfElse";
 import Api from "@/lib/api";
 import { GetAffiliateChart } from "@/lib/charts";
 import { COUNTRIES, FLAG_CODE_TABLE, TOAST_OPTIONS } from "@/lib/constants";
-import { CopyToClipboard, GetDateFormat, GetDurationText, GetNumber, GetPlural, GetPrettyDate } from "@/lib/helpers";
+import {
+    CopyToClipboard,
+    GetCurrency,
+    GetDateFormat,
+    GetDurationText,
+    GetNumber,
+    GetPlural,
+    GetPrettyDate
+} from "@/lib/helpers";
 
 import EChartsReact from "echarts-for-react";
 import NoSsr from "@/components/helpers/NoSsr";
@@ -74,6 +82,8 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DateRangePicker } from "react-date-range";
 import EmojiFlag from "@/components/elements/EmojiFlag";
+import {BiReceipt, BiSolidCoupon} from "react-icons/bi";
+import {BsCart4} from "react-icons/bs";
 
 const Affiliate = ({ _stats, _data }) => {
     const toast = useToast(TOAST_OPTIONS);
@@ -160,7 +170,9 @@ const Affiliate = ({ _stats, _data }) => {
     }
 
     async function ChangeCoupon() {
-        if (affiliate.coupon === state.coupon.current.value.toUpperCase()) {
+        const val = state.coupon.current.value.toUpperCase();
+
+        if (affiliate.coupon === val || val.length < 3) {
             return;
         }
 
@@ -190,6 +202,7 @@ const Affiliate = ({ _stats, _data }) => {
         conversions: {
             productName: React.useRef(null),
             commission: React.useRef(null),
+            isRoyalty: React.useRef(null),
 
             quantity: React.useRef(null),
             total: React.useRef(null),
@@ -229,6 +242,7 @@ const Affiliate = ({ _stats, _data }) => {
             affiliateId: affiliate.id,
             order: {
                 commission: state.conversions.commission.current.value,
+                isRoyalty: state.conversions.isRoyalty.current.checked,
                 product: {
                     name: state.conversions.productName.current.value,
                     quantity: state.conversions.quantity.current.value,
@@ -464,7 +478,7 @@ const Affiliate = ({ _stats, _data }) => {
                             </SimpleGrid>
 
                             <SimpleGrid w='100%' columns={2} spacing={4}>
-                                <TitleOption title='Status' subtitle='Approval status of this affiliate.'>
+                                <TitleOption title='Status' subtitle='Unapproved affiliates can&apos;t get sales.'>
                                     <HStack mb={2} spacing={4}>
                                         {affiliate.approved !== null ?
                                             <>
@@ -484,10 +498,8 @@ const Affiliate = ({ _stats, _data }) => {
                                     </HStack>
 
                                     <NoSsr>
-                                        <Text>Affiliate for <Tooltip placement='bottom'
-                                                                     label={`Registered on ${new Date(affiliate.registeredAt).toLocaleString()}`}>
-                                            <Text fontWeight='bold'
-                                                  as='span'>{GetDurationText(new Date() - new Date(affiliate.registeredAt))}</Text>
+                                        <Text>Affiliate for <Tooltip placement='bottom' label={`Registered on ${new Date(affiliate.registeredAt).toLocaleString()}`}>
+                                            <Text fontWeight='bold' as='span'>{GetDurationText(new Date() - new Date(affiliate.registeredAt))}</Text>
                                         </Tooltip>.</Text>
                                     </NoSsr>
                                 </TitleOption>
@@ -505,20 +517,56 @@ const Affiliate = ({ _stats, _data }) => {
                                             <Radio colorScheme='brand' value='1'>Fixed</Radio>
                                         </HStack>
 
-                                        {affiliate.commissions.type === 0 && <InputGroup size='sm'>
-                                            <Input type='number' w='150px' value={affiliate.commissions.amount}
-                                                   onChange={(e) => setAffiliate({
-                                                       ...affiliate,
-                                                       commissions: {...affiliate.commissions, amount: e.target.value}
-                                                   })}/>
-                                            <InputRightAddon>%</InputRightAddon>
-                                        </InputGroup>}
+                                        {affiliate.commissions.type === 0 && <>
+                                            <InputGroup size='sm'>
+                                                <Input type='number' w='150px' value={affiliate.commissions.amount}
+                                                       onChange={(e) => setAffiliate({
+                                                           ...affiliate,
+                                                           commissions: {...affiliate.commissions, amount: e.target.value}
+                                                       })}/>
+                                                <InputRightAddon>%</InputRightAddon>
+                                            </InputGroup>
+
+                                            <HStack>
+                                                <Checkbox size='sm' isChecked={affiliate.commissions.ignoreProducts}
+                                                          onChange={(e) => setAffiliate({
+                                                              ...affiliate,
+                                                              commissions: {
+                                                                  ...affiliate.commissions,
+                                                                  ignoreProducts: e.target.checked
+                                                              }
+                                                          })}>
+                                                    Ignore Products
+                                                </Checkbox>
+
+                                                <Tooltip label='Product-specific commissions will override affiliate commissions, unless you check this.'>
+                                                    <span><FaInfoCircle /></span>
+                                                </Tooltip>
+                                            </HStack>
+                                        </>}
 
                                         {affiliate.commissions.type === 1 && <>
                                             <InputGroup size='sm'>
-                                                <InputLeftAddon>$</InputLeftAddon>
+                                                <InputLeftAddon>{GetCurrency()}</InputLeftAddon>
                                                 <Input w='150px' value={affiliate.commissions.amount}/>
                                             </InputGroup>
+
+                                            <HStack>
+                                                <Checkbox size='sm' isChecked={affiliate.commissions.ignoreProducts}
+                                                          onChange={(e) => setAffiliate({
+                                                              ...affiliate,
+                                                              commissions: {
+                                                                  ...affiliate.commissions,
+                                                                  ignoreProducts: e.target.checked
+                                                              }
+                                                          })}>
+                                                    Ignore Products
+                                                </Checkbox>
+
+                                                <Tooltip label='Product-specific commissions will override affiliate commissions, unless you check this.'>
+                                                    <span><FaInfoCircle /></span>
+                                                </Tooltip>
+                                            </HStack>
 
                                             <Checkbox size='sm' isChecked={affiliate.commissions.applyIndividual}
                                                       onChange={(e) => setAffiliate({
@@ -629,7 +677,12 @@ const Affiliate = ({ _stats, _data }) => {
                                                                 </Td>
 
                                                                 <Td>
-                                                                    {GetNumber(order.commission)}
+                                                                    {order.isRoyalty ? <HStack spacing={3}>
+                                                                        <Text>{GetNumber(order.commission)}</Text>
+                                                                        <Tooltip label='This is a royalty commission.'>
+                                                                            <span><FaCrown /></span>
+                                                                        </Tooltip>
+                                                                    </HStack> : GetNumber(order.commission)}
                                                                 </Td>
 
                                                                 <Td>
@@ -762,14 +815,14 @@ const Affiliate = ({ _stats, _data }) => {
                 </Tabs>
             </VStack>
 
-            <EasyModal title='Change Coupon' isOpen={modals.coupon.isOpen} onClose={modals.coupon.onClose}
-                       footer={<Button onClick={ChangeCoupon} leftIcon={<Icon as={FaCheck} mr={1}/>}>Save
-                           Coupon</Button>}>
-                <Input textTransform='uppercase' fontWeight='medium' placeholder='COUPON123' maxLength={16}
-                       ref={state.coupon}/>
+            <EasyModal icon={BiSolidCoupon} title='Change Code' isOpen={modals.coupon.isOpen} onClose={modals.coupon.onClose}
+                       footer={<Button onClick={ChangeCoupon} leftIcon={<Icon as={FaCheck} mr={1}/>}>Save Coupon</Button>}>
+                <TitleOption title='Coupon Code' subtitle='Coupon codes have to be unique for every affiliate.'>
+                    <Input textTransform='uppercase' fontWeight='medium' placeholder='COUPON123' maxLength={16} ref={state.coupon}/>
+                </TitleOption>
             </EasyModal>
 
-            <EasyModal title='Custom Conversion' isOpen={modals.conversion.isOpen} onClose={modals.conversion.onClose}
+            <EasyModal icon={BiReceipt} title='Custom Conversion' isOpen={modals.conversion.isOpen} onClose={modals.conversion.onClose}
                        footer={<Button onClick={AddCustomConversion} leftIcon={<FaPlus/>}>Create</Button>}>
                 <VStack alignItems='stretch' spacing={3}>
                     <TitleOption title='Product Name' subtitle='The name of the product being sold.'>
@@ -778,6 +831,10 @@ const Affiliate = ({ _stats, _data }) => {
 
                     <TitleOption title='Commission' subtitle='The commission for this order.'>
                         <Input type='number' placeholder='10' ref={state.conversions.commission}/>
+                    </TitleOption>
+
+                    <TitleOption title='Is this a royalty commission?' subtitle='Royalty commissions are shared with specific affiliates on every sale your shop makes.'>
+                        <Checkbox ref={state.conversions.isRoyalty}>Yes</Checkbox>
                     </TitleOption>
 
                     <Accordion allowToggle>
@@ -827,7 +884,7 @@ const Affiliate = ({ _stats, _data }) => {
                                 </TitleOption>
 
                                 <TitleOption title='Country' subtitle='The customer&apos;s country.'>
-                                    <Select ref={state.conversions.country}>
+                                    <Select defaultValue='US' ref={state.conversions.country}>
                                         {COUNTRIES.map((item, idx) => <option key={idx} value={item.code}>{item.name}</option>)}
                                     </Select>
                                 </TitleOption>
@@ -837,7 +894,7 @@ const Affiliate = ({ _stats, _data }) => {
                 </VStack>
             </EasyModal>
 
-            <EasyModal title='Custom Payout' isOpen={modals.payout.isOpen} onClose={modals.payout.onClose}
+            <EasyModal icon={BiReceipt} title='Custom Payout' isOpen={modals.payout.isOpen} onClose={modals.payout.onClose}
                        footer={<Button onClick={AddCustomPayout} leftIcon={<FaPlus/>}>Create</Button>}>
                 <Text mb={4} fontWeight='medium'>* Note: Payouts are automatically created at the end of every payout
                     period.</Text>
@@ -853,7 +910,7 @@ const Affiliate = ({ _stats, _data }) => {
                 </VStack>
             </EasyModal>
 
-            <EasyModal title='Customer Information' isOpen={customer.open}
+            <EasyModal icon={FaInfo} title='Customer Information' isOpen={customer.open}
                        onClose={() => setCustomer({open: false, data: {}})}>
                 <VStack alignItems='stretch' spacing={4}>
                     <SimpleGrid columns={2}>
@@ -882,7 +939,7 @@ const Affiliate = ({ _stats, _data }) => {
                 </VStack>
             </EasyModal>
 
-            <EasyModal title='Products' isOpen={products.open}
+            <EasyModal icon={BsCart4} title='Products' isOpen={products.open}
                        onClose={() => setProducts({open: false, custom: false, extra: [], array: []})}
                        footer={products.custom &&
                            <Text my={2} fontWeight='medium'>* This order has been manually added.</Text>}>

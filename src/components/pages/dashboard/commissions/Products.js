@@ -26,6 +26,7 @@ import TitleOption from "@/components/elements/TitleOption";
 import Api from "@/lib/api";
 import { TOAST_OPTIONS } from "@/lib/constants";
 import { useRouter } from "next/navigation";
+import {BsCart, BsCart4} from "react-icons/bs";
 
 const Products = ({ _data }) => {
     const router = useRouter();
@@ -44,6 +45,9 @@ const Products = ({ _data }) => {
     const modal = useDisclosure();
 
     async function AddProduct() {
+        if (state.name.length === 0)
+            return;
+
         const res = await Api.post('/website/commissions/products', state);
         if (res.status === 200) {
             modal.onClose();
@@ -165,7 +169,7 @@ const Products = ({ _data }) => {
                 </TableContainer>
             </TitleCard>
 
-            <EasyModal title={modalType === 'add' ? 'Add a product' : 'Edit product'} isOpen={modal.isOpen}
+            <EasyModal icon={BsCart4} title={modalType === 'add' ? 'Add a product' : 'Edit product'} isOpen={modal.isOpen}
                        onClose={() => {
                            modal.onClose();
 
@@ -181,7 +185,7 @@ const Products = ({ _data }) => {
                            </Button>
                        }>
                 <VStack alignItems='stretch' spacing={4}>
-                    <TitleOption title='Name' subtitle='The *exact* name of the product.'>
+                    <TitleOption title='Name' subtitle={<Text fontSize={14} mb={2}>The <Text as='span' fontWeight='bold'>exact</Text> name of the product.</Text>}>
                         <Input placeholder='Product' value={state.name}
                                onChange={(e) => setState({...state, name: e.target.value})}/>
                     </TitleOption>

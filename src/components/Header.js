@@ -26,6 +26,8 @@ dayjs.extend(relativeTime);
 
 import EasyModal from './elements/EasyModal';
 import { redirect } from "next/navigation";
+import {BsGlobe, BsGlobe2, BsGlobeEuropeAfrica} from "react-icons/bs";
+import {TbGlobeFilled} from "react-icons/tb";
 
 const Notification = ({ timestamp, important, text, link }) => {
     return (
@@ -147,7 +149,7 @@ const Header = ({ data, pc, sidebar }) => {
                 </HStack>
             </HStack>
 
-            <EasyModal title='Select your website' isOpen={shopSelect.isOpen} onClose={shopSelect.onClose}
+            <EasyModal icon={TbGlobeFilled} title='Select your website' isOpen={shopSelect.isOpen} onClose={shopSelect.onClose}
                        footer={
                            <Button size='sm' onClick={() => {
                                shopSelect.onClose();

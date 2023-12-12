@@ -45,7 +45,7 @@ import {
 import {CURRENCIES, INTEGRATIONS, LANGUAGES, TOAST_OPTIONS} from "../../../lib/constants";
 
 import { FaMagnifyingGlass } from "react-icons/fa6";
-import {FaBell, FaBullhorn, FaCog, FaLink, FaTrash, FaWrench} from "react-icons/fa";
+import {FaBell, FaBullhorn, FaCode, FaCog, FaIdCard, FaLink, FaTrash, FaUser, FaWrench} from "react-icons/fa";
 
 import { useRouter } from "next/navigation";
 import Statistics from "@/components/elements/Statistics";
@@ -250,20 +250,20 @@ const Website = ({ _data }) => {
             }
 
             await Save();
-        }, 500);
+        }, 1000);
 
         return () => clearTimeout(id);
     }, [data]);
 
     return (
         <>
-            <SimpleGrid columns={{ base: 1, '2xl': 2 }} spacing={4}>
-                <SimpleGrid spacing={4} columns={{ base: 1, md: 3 }}>
-                    <TextStatistics label='URL' value={data.url} />
-                    <TextStatistics label='Shop Token' value={data.token} />
-                    <TextStatistics label='Integration Type' value={INTEGRATIONS[data.sdk]} />
-                </SimpleGrid>
+            <SimpleGrid mb={4} spacing={4} columns={{ base: 1, md: 3 }}>
+                <TextStatistics icon={<FaLink />} label='URL' value={data.url} />
+                <TextStatistics icon={<FaUser />} label='Shop Token' value={data.token} />
+                <TextStatistics icon={<FaCode />} label='Integration Type' value={INTEGRATIONS[data.sdk]} />
+            </SimpleGrid>
 
+            <SimpleGrid columns={{ base: 1, '2xl': 2 }} spacing={4}>
                 <TitleCard title='General' icon={<FaCog fontSize={20} />}>
                     <VStack spacing={6} w='100%' alignItems='stretch'>
                         <TitleOption title='Website Prefix' subtitle='Your affiliate registration / dashboard subdomain.' category='Routing'>
@@ -400,15 +400,12 @@ const Website = ({ _data }) => {
                 </TitleCard>
             </SimpleGrid>
 
-            <EasyModal footer={<Button isLoading={state.loading} loadingText='Checking..' onClick={SetCustomDomain} isDisabled={!state.customDomainSet} leftIcon={<FaMagnifyingGlass />}>Check Validity</Button>}
-                       size='4xl' title={<HStack mb={4} spacing={4}>
-                <FaLink />
-                <Text fontWeight='medium' fontSize={20}>Custom Domain</Text>
-            </HStack>} isOpen={customModal.isOpen} onClose={customModal.onClose}>
+            <EasyModal icon={FaLink} title='Custom Domain' footer={<Button isLoading={state.loading} loadingText='Checking..' onClick={SetCustomDomain} isDisabled={!state.customDomainSet} leftIcon={<FaMagnifyingGlass />}>Check Validity</Button>}
+                       size='4xl' isOpen={customModal.isOpen} onClose={customModal.onClose}>
                 <TitleOption title='Remote host' subtitle='We recommend using a subdomain, but we also support full domains.'>
                     <InputGroup>
                         <InputLeftAddon>https://</InputLeftAddon>
-                        <Input placeholder={data.customDomain.value ?? 'affiliate.example.com'} value={state.customDomain}
+                        <Input isDisabled={state.customDomainSet} placeholder={data.customDomain.value ?? 'affiliate.example.com'} value={state.customDomain}
                                onChange={(e) => {
                                    const result = e.target.value.replace(/[^a-z0-9.]/gi, '');
 
