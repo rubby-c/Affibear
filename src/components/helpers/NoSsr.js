@@ -1,6 +1,6 @@
 import React from 'react';
 import dynamic from "next/dynamic";
-import {Text} from "@chakra-ui/react";
+import {Spinner, Text} from "@chakra-ui/react";
 
 const NoSsr = ({ children }) => {
     return children;
@@ -8,5 +8,5 @@ const NoSsr = ({ children }) => {
 
 export default dynamic(() => Promise.resolve(NoSsr), {
     ssr: false,
-    loading: () => <Text>...</Text>
+    loading: () => <Spinner size='sm' />
 });

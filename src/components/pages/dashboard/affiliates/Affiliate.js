@@ -76,14 +76,13 @@ import {
 import EChartsReact from "echarts-for-react";
 import NoSsr from "@/components/helpers/NoSsr";
 
-const per_page = 10;
-
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { DateRangePicker } from "react-date-range";
 import EmojiFlag from "@/components/elements/EmojiFlag";
 import {BiReceipt, BiSolidCoupon} from "react-icons/bi";
 import {BsCart4} from "react-icons/bs";
+import Pagination, {PerPage} from "@/components/elements/Pagination";
 
 const Affiliate = ({ _stats, _data }) => {
     const toast = useToast(TOAST_OPTIONS);
@@ -113,39 +112,7 @@ const Affiliate = ({ _stats, _data }) => {
 
     const [page, setPage] = React.useState(1);
 
-    function NextPage() {
-        const _page = page + 1;
-        const conversions = stats.flatMap(x => x.orders);
 
-        if (conversions.length < ((_page - 1) * per_page) + 1) {
-            return;
-        }
-
-        const start = (_page - 1) * per_page;
-        const end = _page * 10;
-        const arr = conversions.slice(start, end);
-
-        if (arr.length > 0 && conversions.length >= per_page) {
-            setPage(_page);
-        }
-    }
-
-    function PreviousPage() {
-        const _page = page - 1;
-        if (_page < 1) {
-            return;
-        }
-
-        const conversions = stats.flatMap(x => x.orders);
-
-        const start = (_page - 1) * per_page;
-        const end = _page * per_page;
-        const arr = conversions.slice(start, end);
-
-        if (arr.length > 0) {
-            setPage(_page);
-        }
-    }
     
     // endregion
 
@@ -375,8 +342,7 @@ const Affiliate = ({ _stats, _data }) => {
         <>
             <VStack spacing={4} alignItems='stretch'>
                 <TitleCard title={affiliate.name}
-                           icon={<IconButton onClick={() => router.push('/dashboard/affiliates')} aria-label='Go Back'
-                                             size='sm' variant='ghost' icon={<FaChevronLeft/>}/>}
+                           icon={<IconButton onClick={() => router.push('/dashboard/affiliates')} aria-label='Go Back' size='sm' variant='ghost' icon={<FaChevronLeft/>}/>}
                            item={
                                <HStack>
                                    <Popover placement='bottom-start'>
@@ -398,13 +364,13 @@ const Affiliate = ({ _stats, _data }) => {
                                        </PopoverContent>
                                    </Popover>
 
-                                   <Tooltip placement='left' label='Copy Affiliate ID'>
+                                   <Tooltip placement='bottom-start' label='Click to copy affiliate ID.'>
                                        <IconButton size='sm' variant='ghost' icon={<FaRegCopy/>} aria-label='Copy ID'
                                                    onClick={() => CopyToClipboard(affiliate.id)}/>
                                    </Tooltip>
                                </HStack>
                            }>
-                    <SimpleGrid columns={{base: 1, md: 2}} spacing={6}>
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                         <VStack alignItems='start' spacing={4}>
                             <VStack alignItems='start'>
                                 <HStack>
@@ -620,7 +586,7 @@ const Affiliate = ({ _stats, _data }) => {
                                 }>
                                     <>
                                         <Box overflowX='auto'>
-                                            <Table variant='simple'>
+                                            <Table variant='striped'>
                                                 <Thead>
                                                     <Tr>
                                                         <Th>Time</Th>
@@ -633,7 +599,7 @@ const Affiliate = ({ _stats, _data }) => {
                                                 </Thead>
 
                                                 <Tbody>
-                                                    {filteredStats.flatMap(i => i.orders).slice((page - 1) * per_page, page * per_page).map((order, idx) => {
+                                                    {filteredStats.flatMap(i => i.orders).slice((page - 1) * PerPage, page * PerPage).map((order, idx) => {
                                                         return (
                                                             <Tr key={idx}>
                                                                 <Td>{new Date(order.timestamp).toLocaleString()}</Td>
@@ -677,12 +643,14 @@ const Affiliate = ({ _stats, _data }) => {
                                                                 </Td>
 
                                                                 <Td>
-                                                                    {order.isRoyalty ? <HStack spacing={3}>
-                                                                        <Text>{GetNumber(order.commission)}</Text>
-                                                                        <Tooltip label='This is a royalty commission.'>
-                                                                            <span><FaCrown /></span>
-                                                                        </Tooltip>
-                                                                    </HStack> : GetNumber(order.commission)}
+                                                                    <NoSsr>
+                                                                        {order.isRoyalty ? <HStack spacing={3}>
+                                                                            <Text>{GetNumber(order.commission)}</Text>
+                                                                            <Tooltip label='This is a royalty commission.'>
+                                                                                <span><FaCrown /></span>
+                                                                            </Tooltip>
+                                                                        </HStack> : GetNumber(order.commission)}
+                                                                    </NoSsr>
                                                                 </Td>
 
                                                                 <Td>
@@ -698,8 +666,7 @@ const Affiliate = ({ _stats, _data }) => {
 
                                                                             <PopoverContent w='200px'>
                                                                                 <PopoverArrow/>
-                                                                                <PopoverHeader>Are you
-                                                                                    sure?</PopoverHeader>
+                                                                                <PopoverHeader>Are you sure?</PopoverHeader>
                                                                                 <PopoverBody>
                                                                                     <Button w='100%' size='sm'
                                                                                             leftIcon={<FaTrash/>}
@@ -719,15 +686,7 @@ const Affiliate = ({ _stats, _data }) => {
                                             </Table>
                                         </Box>
 
-                                        <HStack mt={4} justifyContent='space-between' spacing={4}>
-                                            <IconButton variant='ghost' icon={<FaArrowLeft/>}
-                                                        onClick={() => PreviousPage()} aria-label='Previous Page'/>
-
-                                            <Text>Page: <Text as='span' fontWeight='bold'>{page}</Text></Text>
-
-                                            <IconButton variant='ghost' icon={<FaArrowRight/>}
-                                                        onClick={() => NextPage()} aria-label='Next Page'/>
-                                        </HStack>
+                                        <Pagination list={stats.flatMap(x => x.orders)} page={page} setPage={setPage} />
                                     </>
 
                                     <Text>This affiliate doesn&apos;t have any conversions.</Text>
@@ -737,7 +696,7 @@ const Affiliate = ({ _stats, _data }) => {
                             <TabPanel p={0}>
                                 <IfElse boolean={affiliate.payouts.length > 0}>
                                     <Box overflowX='auto'>
-                                        <Table variant='simple'>
+                                        <Table variant='striped'>
                                             <Thead>
                                                 <Tr>
                                                     <Th>Time</Th>

@@ -4,6 +4,7 @@ import React from 'react';
 import {Text, Box, HStack, Icon} from "@chakra-ui/react";
 import {FaChevronDown, FaChevronUp} from "react-icons/fa";
 import {GoHorizontalRule} from "react-icons/go";
+import NoSsr from "@/components/helpers/NoSsr";
 
 const Statistics = ({ label, value, prev, item }) => {
     const change = (value / prev === 0 ? 1 : prev);
@@ -22,9 +23,11 @@ const Statistics = ({ label, value, prev, item }) => {
             </Text>}
 
             <HStack w='100%' justifyContent='space-between' mt={4}>
-                <Text fontWeight='bold' fontSize='2xl'>
-                    {value}
-                </Text>
+                <NoSsr>
+                    <Text fontWeight='bold' fontSize='2xl'>
+                        {value}
+                    </Text>
+                </NoSsr>
 
                 {prev !== undefined && <HStack bg={change === 1 ? 'gray.100' : change > 0 ? 'brand.50' : 'red.50'}
                                                fontWeight='semibold' borderRadius='1rem' px={2} py={1}>

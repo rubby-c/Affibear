@@ -16,9 +16,9 @@ import {
 import Header from "../../Header";
 import Footer from "../../Footer";
 import NextLink from "next/link";
-import {RiBearSmileLine} from "react-icons/ri";
-import {BiCog, BiDollarCircle, BiScreenshot, BiSolidCoupon, BiStats, BiUser} from "react-icons/bi";
-import {BsEnvelope, BsPercent} from "react-icons/bs";
+import { RiBearSmileLine } from "react-icons/ri";
+import { BiCog, BiDollarCircle, BiScreenshot, BiStats, BiUser } from "react-icons/bi";
+import { BsEnvelope, BsPercent } from "react-icons/bs";
 
 const NavCategory = ({ children }) => {
     return (
@@ -28,7 +28,7 @@ const NavCategory = ({ children }) => {
 
 const NavButton = ({ icon, href, children }) => {
     return (
-        <Button w='100%' variant='ghost' fontWeight='normal'
+        <Button w='100%' variant='ghost' fontWeight='normal' colorScheme='brand'
                 leftIcon={<Icon fontSize='xl' as={icon} mr={2} />} justifyContent='start' color='var(--body-text)'
                 as={NextLink} href={href}>
             {children}

@@ -48,6 +48,7 @@ import {GetCurrency, GetNumber} from "@/lib/helpers";
 import SearchBar from "@/components/elements/SearchBar";
 import NoSsr from "@/components/helpers/NoSsr";
 import {BsEnvelope} from "react-icons/bs";
+import Pagination, {PerPage} from "@/components/elements/Pagination";
 
 const Affiliates = ({ data }) => {
     const router = useRouter();
@@ -138,6 +139,10 @@ const Affiliates = ({ data }) => {
         const query = search.toLowerCase();
 
         const arr = list.filter(i => i.name.toLowerCase().includes(query) || i.coupon.toLowerCase().includes(query));
+        if (arr.length > 0) {
+            setPage(1);
+        }
+
         setResults(arr);
     }, [search]);
 
@@ -168,24 +173,27 @@ const Affiliates = ({ data }) => {
         }
     }
 
+    const [page, setPage] = React.useState(1);
+
     return (
         <>
             <TitleCard icon={<BiUser />} title='Affiliates' item={<HStack>
                 <Button size='sm' leftIcon={<FaEnvelope/>} onClick={async () => {
                     const res = await Api.get('/website/email-templates');
 
-                    const defaults = res.data.find(i => i.name === 'Default Affiliate Invitation');
+                    const defaults = res.data.templates.find(i => i.name === 'Default Affiliate Invitation');
+
                     if (defaults !== undefined) {
                         setState({
                             ...state,
                             invite: {
                                 ...state.invite,
                                 templateId: defaults.id,
-                                templates: res.data.map(i => ({ id: i.id, name: i.name }))
+                                templates: res.data.templates.map(i => ({ id: i.id, name: i.name }))
                             }
                         });
                     } else {
-                        setState({ ...state, invite: { ...state.invite, templates: res.data.map(i => ({ id: i.id, name: i.name }))}});
+                        setState({ ...state, invite: { ...state.invite, templates: res.data.templates.map(i => ({ id: i.id, name: i.name }))}});
                     }
 
                     invite.onOpen();
@@ -195,7 +203,7 @@ const Affiliates = ({ data }) => {
                 <SearchBar placeholder='Search by name or coupon..' state={search} setState={setSearch} />
 
                 {results.length > 0 ? <TableContainer>
-                        <Table my={4} variant='simple'>
+                        <Table my={4} variant='striped'>
                             <Thead>
                                 <Tr>
                                     <Th>Name</Th>
@@ -208,14 +216,14 @@ const Affiliates = ({ data }) => {
                             </Thead>
 
                             <Tbody>
-                                {list.map((item, idx) => {
+                                {results.slice((page - 1) * PerPage, page * PerPage).map((item, idx) => {
                                     const stats = GetStats(item.stats);
 
                                     return (
                                         <Tr key={idx}>
                                             <Td>
                                                 <HStack spacing={3}>
-                                                    <Text>{item.name}</Text>
+                                                    <Text fontWeight='medium'>{item.name}</Text>
                                                     <Tag fontWeight='medium'>{item.coupon}</Tag>
                                                 </HStack>
                                             </Td>
@@ -264,6 +272,8 @@ const Affiliates = ({ data }) => {
                                 })}
                             </Tbody>
                         </Table>
+
+                        <Pagination list={results} page={page} setPage={setPage} />
                     </TableContainer>
                     : search.length > 0 ? <Text>No results could be found.</Text> : <Text>You don&apos;t have any affiliates.</Text>}
             </TitleCard>

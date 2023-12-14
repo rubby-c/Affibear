@@ -9,7 +9,9 @@ const WideTitleOption = ({ title, subtitle, children }) => {
                 <Text fontSize={14}>{subtitle}</Text>
             </div>
 
-            {children}
+            <div>
+                {children}
+            </div>
         </SimpleGrid>
     );
 };

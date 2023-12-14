@@ -11,7 +11,7 @@ const Page = async () => {
     });
     
     return (
-        <Emails _data={res.data} />
+        <Emails data={res.data} />
     );
 };
 

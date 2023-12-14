@@ -133,7 +133,7 @@ const Products = ({ _data }) => {
                 modal.onOpen();
             }} leftIcon={<FaPlus/>}>Add Product</Button>}>
                 <TableContainer as={IfElse} boolean={data.length > 0}>
-                    <Table variant='simple'>
+                    <Table variant='striped'>
                         <Thead>
                             <Tr>
                                 <Th>Product</Th>

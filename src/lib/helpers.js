@@ -67,7 +67,9 @@ export function GetNumber(num) {
         currency: isNode ? 'USD' : localStorage.getItem('affibear-currency'),
     });
 
-    return formatter.format(num);
+    return (
+        formatter.format(num)
+    );
 }
 
 export async function CopyToClipboard(text) {

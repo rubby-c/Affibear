@@ -16,12 +16,12 @@ import {
     Select,
     SimpleGrid,
     Tab,
-    Table,
+    Table, TableContainer,
     TabList,
     TabPanel,
     TabPanels,
-    Tabs,
-    Tbody,
+    Tabs, Tag,
+    Tbody, Td,
     Text,
     Th,
     Thead, Tooltip,
@@ -38,15 +38,18 @@ import WideTitleOption from "@/components/elements/WideTitleOption";
 
 import Api from "@/lib/api";
 import { TOAST_OPTIONS } from "@/lib/constants";
-import {FaDollarSign, FaInfoCircle, FaPlus, FaWrench} from "react-icons/fa";
+import {FaDollarSign, FaInfoCircle, FaPlus, FaTrash, FaWrench} from "react-icons/fa";
 import NextLink from "next/link";
 import EasyModal from "@/components/elements/EasyModal";
 import IfElse from "@/components/helpers/IfElse";
-import {GetCurrency} from "@/lib/helpers";
+import { GetCurrency } from "@/lib/helpers";
+import Pagination, {PerPage} from "@/components/elements/Pagination";
 
-const Commissions = ({ _data }) => {
+const Commissions = ({ data }) => {
     const toast = useToast(TOAST_OPTIONS);
-    const [data, setData] = React.useState(_data);
+
+    const [commissions, setCommissions] = React.useState(data.commissions);
+    const [royalties, setRoyalties] = React.useState(data.royalties);
 
     const [tab, setTab] = React.useState(0);
     const [affiliates, setAffiliates] = React.useState([]);
@@ -54,7 +57,7 @@ const Commissions = ({ _data }) => {
     const royaltyModal = useDisclosure();
     const [royalty, setRoyalty] = React.useState({
         affiliateId: '',
-        amount: 0,
+        amount: 10,
         type: 0,
         applyIndividual: true,
         ignoreProducts: true
@@ -82,10 +85,7 @@ const Commissions = ({ _data }) => {
         const res = await Api.post(`/website/royalties`, royalty);
 
         if (res.status === 200) {
-            setData({
-                ...data,
-                royalties: [...data.royalties, royalty]
-            });
+            setRoyalties([...royalties, royalty]);
 
             toast({
                 title: 'Success',
@@ -105,10 +105,7 @@ const Commissions = ({ _data }) => {
         const res = await Api.delete(`/website/royalties?id=${id}`);
 
         if (res.status === 200) {
-            setData({
-                ...data,
-                royalties: data.royalties.filter(i => i.id !== id)
-            });
+            setRoyalties(royalties.filter(i => i.id !== id));
 
             toast({
                 title: 'Success',
@@ -124,6 +121,8 @@ const Commissions = ({ _data }) => {
         }
     }
 
+    const [page, setPage] = React.useState(1);
+
     return (
         <>
             <TitleCard title='Commissions' icon={<BsPercent fontSize={20} />} item={
@@ -137,7 +136,7 @@ const Commissions = ({ _data }) => {
                     }} leftIcon={<FaPlus />}>Create Rates</Button>
                 </IfElse>
             }>
-                <Tabs index={tab} onChange={val => setTab(val)} size='sm' variant='soft-rounded' colorScheme='gray' isLazy>
+                <Tabs index={tab} onChange={val => setTab(val)} variant='soft-rounded' colorScheme='gray' isLazy>
                     <TabList as={HStack}>
                         <Tab>Commissions</Tab>
                         <Tab>
@@ -153,14 +152,14 @@ const Commissions = ({ _data }) => {
                     </TabList>
 
                     <TabPanels>
-                        <TabPanel px={0}>
+                        <TabPanel p={0} pt={4}>
                             <SimpleGrid spacing={4} columns={2}>
                                 <TitleOption title='Default Commission' subtitle='Commission rates applied to all affiliates.'>
-                                    <RadioGroup value={data.commissions.type.toString()} as={VStack} w='100%'
+                                    <RadioGroup value={commissions.type.toString()} as={VStack} w='100%'
                                                 alignItems='start'
-                                                onChange={(value) => setData({
-                                                    ...data,
-                                                    data: {...data.commissions, type: Number(value)}
+                                                onChange={(value) => setCommissions({
+                                                    ...commissions,
+                                                    type: Number(value)
                                                 })}>
 
                                         <HStack spacing={4}>
@@ -168,28 +167,25 @@ const Commissions = ({ _data }) => {
                                             <Radio colorScheme='brand' value='1'>Fixed</Radio>
                                         </HStack>
 
-                                        {data.commissions.type === 0 && <InputGroup size='sm'>
-                                            <Input type='number' w='150px' value={data.commissions.amount}
-                                                   onChange={(e) => setData({
-                                                       ...data,
-                                                       commissions: {...data.commissions, amount: e.target.value}
+                                        {commissions.type === 0 && <InputGroup size='sm'>
+                                            <Input type='number' w='150px' value={commissions.amount}
+                                                   onChange={(e) => setCommissions({
+                                                       ...commissions,
+                                                       amount: e.target.value
                                                    })}/>
                                             <InputRightAddon>%</InputRightAddon>
                                         </InputGroup>}
 
-                                        {data.commissions.type === 1 && <>
+                                        {commissions.type === 1 && <>
                                             <InputGroup size='sm'>
                                                 <InputLeftAddon>{GetCurrency()}</InputLeftAddon>
-                                                <Input w='150px' value={data.commissions.amount}/>
+                                                <Input w='150px' value={commissions.amount}/>
                                             </InputGroup>
 
-                                            <Checkbox size='sm' isChecked={data.commissions.applyIndividual}
-                                                      onChange={(e) => setData({
-                                                          ...data,
-                                                          commissions: {
-                                                              ...data.commissions,
-                                                              applyIndividual: e.target.checked
-                                                          }
+                                            <Checkbox size='sm' isChecked={commissions.applyIndividual}
+                                                      onChange={(e) => setCommissions({
+                                                          ...commissions,
+                                                          applyIndividual: e.target.checked
                                                       })}>
                                                 Apply on each product
                                             </Checkbox>
@@ -197,7 +193,7 @@ const Commissions = ({ _data }) => {
                                     </RadioGroup>
                                 </TitleOption>
 
-                                <TitleOption title='Product Commissions' subtitle={`${data.commissions.productList.length} product-specific commissions.`}>
+                                <TitleOption title='Product Commissions' subtitle={`${commissions.productList.length} product-specific commissions.`}>
                                     <Button as={NextLink} href='/dashboard/commissions/products' leftIcon={<FaWrench />} my={2}>Manage</Button>
                                 </TitleOption>
                             </SimpleGrid>
@@ -210,23 +206,42 @@ const Commissions = ({ _data }) => {
                             </WideTitleOption>
                         </TabPanel>
 
-                        <TabPanel px={0}>
-                            <IfElse boolean={data.royalties.length > 0}>
-                                <Table variant='simple'>
-                                    <Thead>
-                                        <Tr>
-                                            <Th>Affiliate</Th>
-                                            <Th>Commission</Th>
-                                            <Th isNumeric>Actions</Th>
-                                        </Tr>
-                                    </Thead>
+                        <TabPanel p={0} pt={4}>
+                            <IfElse boolean={royalties.length > 0}>
+                                <TableContainer>
+                                    <Table variant='striped'>
+                                        <Thead>
+                                            <Tr>
+                                                <Th>Affiliate</Th>
+                                                <Th>Commission</Th>
+                                                <Th isNumeric>Actions</Th>
+                                            </Tr>
+                                        </Thead>
 
-                                    <Tbody>
-                                        {data.royalties.map((item, idx) => <Tr key={idx}>
-                                            
-                                        </Tr>)}
-                                    </Tbody>
-                                </Table>
+                                        <Tbody>
+                                            {royalties.slice((page - 1) * PerPage, page * PerPage).map((item, idx) => <Tr key={idx}>
+                                                <Td fontWeight='medium'>
+                                                    <NextLink href={`/dashboard/affiliates/${item.affiliateId}`} target='_blank'>
+                                                        {item.affiliateName}
+                                                    </NextLink>
+                                                </Td>
+
+                                                <Td>
+                                                    <HStack>
+                                                        <Text>{item.amount}{item.type === 0 ? '%' : GetCurrency()}</Text>
+                                                        <Tag>{item.type === 0 ? 'Percentage' : 'Fixed'}</Tag>
+                                                    </HStack>
+                                                </Td>
+
+                                                <Td isNumeric>
+                                                    <Button onClick={() => DeleteRoyalty(item.id)} colorScheme='red' leftIcon={<FaTrash />} size='sm'>Delete</Button>
+                                                </Td>
+                                            </Tr>)}
+                                        </Tbody>
+                                    </Table>
+
+                                    <Pagination list={royalties} page={page} setPage={setPage} />
+                                </TableContainer>
 
                                 <Text>You don&apos;t have any royalties.</Text>
                             </IfElse>

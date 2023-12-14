@@ -1,9 +1,12 @@
 export const SDK = "const shop=\"[shop_id]\";async function initialize(){console.log(\"Affibear - Initializing..\");let i=new URLSearchParams(window.location.search);if(i.has(\"ref\")&&null==getCookie(\"ref\")){let e=i.get(\"ref\");setCookie(\"ref\",e,90),await fetch(`https://api.affibear.com/track/[shop_id]/${e}`)}}async function conversion(i){let e=getCookie(\"ref\");if(null==e)return;let t=await fetch(\"http://ip-api.com/json\"),n=await t.json(),o={...i,ip:n};await fetch(`https://api.affibear.com/track?aff=${e}`,{method:\"POST\",headers:{Accept:\"application/json\",\"Content-Type\":\"application/json\"},body:JSON.stringify(o)})}function getCookie(i){let e,t=document.cookie,n=i+\"=\",o=t.indexOf(\"; \"+n);if(-1===o){if(0!==(o=t.indexOf(n)))return null}else o+=2,-1===(e=document.cookie.indexOf(\";\",o))&&(e=t.length);return decodeURI(t.substring(o+n.length,e))}function setCookie(i,e,t){let n=\"\";if(t){let o=new Date;o.setTime(o.getTime()+864e5*t),n=\"; Expires=\"+o.toUTCString()}document.cookie=i+\"=\"+(e||null)+n+\"; Path=/\"}initialize(),window.affiConversion=conversion;";
 
 export const TOAST_OPTIONS = {
-    position: 'top',
+    position: 'top-right',
     duration: 2000,
-    isClosable: true
+    isClosable: true,
+    containerStyle: {
+        maxWidth: '350px'
+    }
 };
 
 export const CURRENCIES = [["AED","د.إ.‏"],["AFN","؋ "],["ALL","Lek"],["AMD","դր."],["ARS","$"],["AUD","$"],["AZN","man."],["BAM","KM"],["BDT","৳"],["BGN","лв. "],["BHD","د.ب.‏ "],["BND","$"],["BOB","$b"],["BRL","R$"],["BYR","р."],["BZD","BZ$"],["CAD","$"],["CHF","fr."],["CLP","$"],["CNY","¥"],["COP","$"],["CRC","₡"],["CSD","Din."],["CZK","Kč"],["DKK","kr."],["DOP","RD$"],["DZD","DZD"],["EEK","kr"],["EGP","ج.م.‏ "],["ETB","ETB"],["EUR","€"],["GBP","£"],["GEL","Lari"],["GTQ","Q"],["HKD","HK$"],["HNL","L."],["HRK","kn"],["HUF","Ft"],["IDR","Rp"],["ILS","₪"],["INR","रु"],["IQD","د.ع.‏ "],["IRR","ريال "],["ISK","kr."],["JMD","J$"],["JOD","د.ا.‏ "],["JPY","¥"],["KES","S"],["KGS","сом"],["KHR","៛"],["KRW","₩"],["KWD","د.ك.‏ "],["KZT","Т"],["LAK","₭"],["LBP","ل.ل.‏ "],["LKR","රු."],["LTL","Lt"],["LVL","Ls"],["LYD","د.ل.‏ "],["MAD","د.م.‏ "],["MKD","ден."],["MNT","₮"],["MOP","MOP"],["MVR","ރ."],["MXN","$"],["MYR","RM"],["NIO","N"],["NOK","kr"],["NPR","रु"],["NZD","$"],["OMR","ر.ع.‏ "],["PAB","B/."],["PEN","S/."],["PHP","PhP"],["PKR","Rs"],["PLN","zł"],["PYG","Gs"],["QAR","ر.ق.‏ "],["RON","lei"],["RSD","Din."],["RUB","р."],["RWF","RWF"],["SAR","ر.س.‏ "],["SEK","kr"],["SGD","$"],["SYP","ل.س.‏ "],["THB","฿"],["TJS","т.р."],["TMT","m."],["TND","د.ت.‏ "],["TRY","TL"],["TTD","TT$"],["TWD","NT$"],["UAH","₴"],["USD","$"],["UYU","$U"],["UZS","so'm"],["VEF","Bs. F."],["VND","₫"],["XOF","XOF"],["YER","ر.ي.‏ "],["ZAR","R"],["ZWL","Z$"]];

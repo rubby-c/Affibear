@@ -21,7 +21,7 @@ import { BsPercent } from "react-icons/bs";
 import { BiScreenshot, BiUser } from "react-icons/bi";
 import {FaCalendarAlt, FaCheck, FaDollarSign, FaStar} from "react-icons/fa";
 
-import {GetDateFormat, GetPrettyDate} from "@/lib/helpers";
+import {GetDateFormat, GetNumber, GetPrettyDate} from "@/lib/helpers";
 import { DateRangePicker } from "react-date-range";
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
@@ -106,13 +106,6 @@ const Dashboard = ({ _data }) => {
     const preValues = GetStats(_data.stats, GetPreviousRange(range));
     const values = GetStats(_data.stats, range);
 
-    const stats = [
-        { label: 'Revenue', value: values._revenueGross, prev: 80 },
-        { label: 'Revenue', value: values._revenueNet, prev: 80 },
-        { label: 'Clicks', value: values._clicks, prev: 10 },
-        { label: 'Conversions', value: values._conversions, prev: 10 },
-    ];
-
     const [net, setNet] = React.useState(true);
 
     return (
@@ -124,7 +117,7 @@ const Dashboard = ({ _data }) => {
                 </PopoverTrigger>
 
                 <PopoverContent w='100%'>
-                    <PopoverArrow/>
+                    <PopoverArrow />
 
                     <PopoverBody>
                         <DateRangePicker ranges={[range]} onChange={(e) => setRange({
@@ -164,12 +157,12 @@ const Dashboard = ({ _data }) => {
                 </Stepper>
             </TitleCard>
 
-            <SimpleGrid mb={3} columns={{base: 2, md: 4}} gap={{base: '4', md: '6'}}>
+            <SimpleGrid mb={3} columns={{ base: 2, md: 4 }} gap={{ base: '4', md: '6' }}>
                 <Statistics label='Affiliates' value={_data.affiliates}/>
 
                 <Statistics label='Revenue' item={<Button onClick={() => setNet(!net)} leftIcon={<FaDollarSign/>} size='xs' colorScheme={net ? 'brand' : 'red'}>
                         {net ? 'Net' : 'Gross'}
-                    </Button>} value={net ? values._revenueNet : values._revenueGross} prev={net ? preValues._revenueNet : preValues._revenueGross}/>
+                    </Button>} value={GetNumber(net ? values._revenueNet : values._revenueGross)} prev={net ? preValues._revenueNet : preValues._revenueGross}/>
 
                 <Statistics label='Clicks' value={values._clicks} prev={preValues._clicks}/>
 

@@ -11,7 +11,7 @@ const Page = async () => {
     });
 
     return (
-        <Commissions _data={res.data} />
+        <Commissions data={res.data} />
     );
 };
 

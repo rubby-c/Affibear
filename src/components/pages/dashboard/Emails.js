@@ -3,30 +3,44 @@
 import React from 'react';
 
 import {
-    Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel,
+    Accordion,
+    AccordionButton,
+    AccordionIcon,
+    AccordionItem,
+    AccordionPanel,
     Box,
-    Button, Divider, HStack, Icon, IconButton,
-    Input, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverHeader, PopoverTrigger, Select,
+    Button,
+    Divider,
+    HStack,
+    Icon,
+    IconButton,
+    Input,
+    InputGroup,
+    InputRightAddon,
+    Popover,
+    PopoverArrow,
+    PopoverBody,
+    PopoverContent,
+    PopoverHeader,
+    PopoverTrigger, SimpleGrid,
     Table,
-    TableContainer, Tag, TagCloseButton, TagLabel,
-    Tbody, Td,
+    TableContainer,
+    Tbody,
+    Td,
     Text,
     Th,
     Thead,
     Tr,
-    useDisclosure, useToast,
+    useDisclosure,
+    useToast,
     VStack
 } from "@chakra-ui/react";
 
 import {
-    FaArrowRight, FaCheck,
-    FaEnvelope,
-    FaPen,
-    FaPencilAlt,
+    FaArrowRight, FaCheck, FaEye, FaEyeSlash,
     FaPlus,
-    FaSave,
     FaStar,
-    FaStarHalfAlt, FaTrash,
+    FaTrash,
     FaWrench
 } from "react-icons/fa";
 
@@ -38,11 +52,12 @@ import { EmailEditor } from "react-email-editor";
 import Api from "@/lib/api";
 import { TOAST_OPTIONS } from "@/lib/constants";
 import IfElse from "@/components/helpers/IfElse";
-import {FaPencil, FaRankingStar, FaX} from "react-icons/fa6";
-import {BsEnvelope} from "react-icons/bs";
-import {MultiSelect} from "chakra-multiselect";
-import {GetPlural} from "@/lib/helpers";
-import {GrTemplate} from "react-icons/gr";
+import { FaMagnifyingGlass, FaX } from "react-icons/fa6";
+import { BsEnvelope } from "react-icons/bs";
+import { MultiSelect } from "chakra-multiselect";
+import { GetPlural } from "@/lib/helpers";
+import { GrTemplate } from "react-icons/gr";
+import Pagination, { PerPage } from "@/components/elements/Pagination";
 
 const config = {
     safeHtml: true,
@@ -58,9 +73,12 @@ const config = {
     }
 };
 
-const Emails = ({ _data }) => {
+const Emails = ({ data }) => {
     const toast = useToast(TOAST_OPTIONS);
     const modal = useDisclosure();
+
+    const [templates, setTemplates] = React.useState(data.templates);
+    const [smtp, setSmtp] = React.useState(data.smtp);
 
     const [view, setView] = React.useState('create');
     const [editor, setEditor] = React.useState();
@@ -89,8 +107,6 @@ const Emails = ({ _data }) => {
         }
     }, []);
 
-    const [data, setData] = React.useState(_data);
-
     const [state, setState] = React.useState({
         id: '',
         favorite: false,
@@ -100,17 +116,31 @@ const Emails = ({ _data }) => {
         html: ''
     });
 
+    const [smtpState, setSmtpState] = React.useState({
+        open: false,
+        view: false,
+        success: false,
+        loading: false,
+
+        enabled: false,
+        server: '',
+        port: 587,
+        sender: '',
+        email: '',
+        password: ''
+    });
+
     async function FavoriteTemplate(template) {
         template.favorite = !template.favorite;
 
         const res = await Api.patch('/website/email-templates', template);
 
         if (res.status === 200) {
-            const arr = [...data];
+            const arr = [...templates];
             const idx = arr.findIndex(i => i.id === template.id);
             arr[idx].favorite = template.favorite;
 
-            setData(arr);
+            setTemplates(arr);
         } else {
             toast({
                 title: `Error`,
@@ -134,7 +164,7 @@ const Emails = ({ _data }) => {
             });
 
             if (res.status === 200) {
-                setData([...data, res.data]);
+                setTemplates([...templates, res.data]);
 
                 toast({
                     title: `Success`,
@@ -178,8 +208,9 @@ const Emails = ({ _data }) => {
             });
 
             if (res.status === 200) {
-                const arr = [...data];
+                const arr = [...templates];
                 const idx = arr.findIndex(i => i.id === state.id);
+
                 arr[idx] = {
                     id: state.id,
                     favorite: state.favorite,
@@ -189,7 +220,7 @@ const Emails = ({ _data }) => {
                     html: result.html
                 };
 
-                setData(arr);
+                setTemplates(arr);
 
                 modal.onClose();
             } else {
@@ -247,7 +278,7 @@ const Emails = ({ _data }) => {
                 status: 'success'
             });
 
-            setData(data.filter(i => i.id !== id));
+            setTemplates(templates.filter(i => i.id !== id));
         } else {
             toast({
                 title: `Error`,
@@ -257,81 +288,171 @@ const Emails = ({ _data }) => {
         }
     }
 
+    async function TestSMTP() {
+        setSmtpState({
+            ...smtpState,
+            loading: true
+        });
+
+        const promise = new Promise(async (resolve, reject) => {
+            const { open, view, success, loading, ...rest } = smtpState;
+            const res = await Api.post('/website/smtp-test', rest);
+            res.status === 200 ? resolve(res.data) : reject(res.data.status ?? res.data);
+
+            setSmtpState({
+                ...smtpState,
+                success: res.status === 200,
+                loading: false
+            });
+        });
+
+        toast.promise(promise, {
+            success: (data) => ({
+                title: 'Success',
+                description: `We've sent a test email to ${data}, check your inbox!`
+            }),
+            error: (err) => ({
+                title: `Error`,
+                description: err.status ?? err
+            }),
+            loading: {
+                title: 'Testing..',
+                description: 'We\'re trying to connect to your SMTP server..'
+            }
+        });
+    }
+
+    async function SaveSMTP() {
+        setSmtpState({
+            ...smtpState,
+            loading: true
+        });
+
+        const promise = new Promise(async (resolve, reject) => {
+            const { open, view, success, loading, ...rest } = smtpState;
+            const res = await Api.post('/website/save-smtp', rest);
+            res.status === 200 ? resolve(res.data) : reject(res.data.status ?? res.data);
+
+            setSmtp(rest);
+
+            setSmtpState({
+                open: false,
+                view: false,
+                success: false,
+                loading: false,
+
+                enabled: false,
+                server: '',
+                port: 587,
+                sender: '',
+                email: '',
+                password: ''
+            });
+        });
+
+        toast.promise(promise, {
+            success: {
+                title: 'Success',
+                description: `You've successfully saved your SMTP configuration!`
+            },
+            error: (err) => ({
+                title: `Error`,
+                description: err.status ?? err
+            }),
+            loading: {
+                title: 'Loading',
+                description: 'Saving changes..'
+            }
+        });
+    }
+
+    const [page, setPage] = React.useState(1);
+
     return (
         <>
-            <TitleCard icon={<BsEnvelope/>} title='Emails' item={
-                <Button leftIcon={<GrTemplate/>} onClick={modal.onOpen}>Create Template</Button>
+            <TitleCard icon={<BsEnvelope />} title='Emails' item={
+                <Button leftIcon={<GrTemplate />} onClick={modal.onOpen}>Create Template</Button>
             }>
-                <IfElse boolean={data.length > 0}>
-                    <TableContainer>
-                        <Table variant='simple'>
-                            <Thead>
-                                <Tr>
-                                    <Th>Name</Th>
-                                    <Th isNumeric>Actions</Th>
-                                </Tr>
-                            </Thead>
+                <TitleOption title='SMTP Configuration' subtitle={<Text>Your emails are sent through <Text fontWeight='bold' as='span'>{smtp.enabled ? smtp.email : 'no-reply@affibear.com'}</Text>.</Text>}>
+                    <Button my={2} onClick={() => setSmtpState({ ...smtpState, open: true })} leftIcon={<FaWrench />}>Configure</Button>
+                </TitleOption>
 
-                            <Tbody>
-                                {data.sort((x, y) => y.favorite - x.favorite).map((template, idx) => <Tr key={idx}>
-                                    <Td>
-                                        <HStack spacing={4}>
-                                            <Icon cursor='pointer' fontSize={24} as={FaStar}
-                                                  onClick={() => FavoriteTemplate(template)}
-                                                  color={template.favorite ? 'yellow.400' : 'gray.300'}
-                                                  aria-label='Favorite'/>
-                                            <Text>{template.name}</Text>
-                                        </HStack>
-                                    </Td>
-                                    <Td>
-                                        <HStack justifyContent='end'>
-                                            <Button onClick={() => {
-                                                setView('edit');
-                                                setState(template);
+                <IfElse boolean={templates.length > 0}>
+                    <>
+                        <TableContainer mt={4}>
+                            <Table variant='striped' colorScheme='gray'>
+                                <Thead>
+                                    <Tr>
+                                        <Th>Name</Th>
+                                        <Th isNumeric>Actions</Th>
+                                    </Tr>
+                                </Thead>
 
-                                                modal.onOpen();
-                                            }} leftIcon={<FaWrench />} size='sm'>Edit</Button>
+                                <Tbody>
+                                    {templates.sort((x, y) => y.favorite - x.favorite).slice((page - 1) * PerPage, page * PerPage).map((template, idx) => <Tr key={idx}>
+                                        <Td>
+                                            <HStack spacing={4}>
+                                                <Icon cursor='pointer' fontSize={24} as={FaStar}
+                                                      onClick={() => FavoriteTemplate(template)}
+                                                      color={template.favorite ? 'yellow.400' : 'gray.300'}
+                                                      aria-label='Favorite'/>
+                                                <Text>{template.name}</Text>
+                                            </HStack>
+                                        </Td>
+                                        <Td>
+                                            <HStack justifyContent='end'>
+                                                <Button onClick={() => {
+                                                    setView('edit');
+                                                    setState(template);
 
-                                            <Button onClick={async () => {
-                                                const res = await Api.get('/website/affiliate-emails');
+                                                    modal.onOpen();
+                                                }} leftIcon={<FaWrench />} size='sm'>Edit</Button>
 
-                                                setSendState({
-                                                    ...sendState,
-                                                    open: true,
-                                                    emails: res.data,
-                                                    templateId: template.id
-                                                });
-                                            }} colorScheme='brand' rightIcon={<FaArrowRight />} size='sm'>Send</Button>
+                                                <Button onClick={async () => {
+                                                    const res = await Api.get('/website/affiliate-emails');
 
-                                            <Popover placement='bottom-end' isLazy
-                                                     size='sm'>
-                                                <PopoverTrigger>
-                                                    <IconButton size='sm' colorScheme='red' icon={<FaTrash />} aria-label='Delete Template' />
-                                                </PopoverTrigger>
+                                                    setSendState({
+                                                        ...sendState,
+                                                        open: true,
+                                                        emails: res.data,
+                                                        templateId: template.id
+                                                    });
+                                                }} colorScheme='brand' rightIcon={<FaArrowRight />} size='sm'>Send</Button>
 
-                                                <PopoverContent w='200px'>
-                                                    <PopoverArrow/>
-                                                    <PopoverHeader>Are you sure?</PopoverHeader>
-                                                    <PopoverBody>
-                                                        <Button w='100%' size='sm'
-                                                                leftIcon={<FaTrash/>}
-                                                                onClick={() => DeleteTemplate(template.id)}
-                                                                colorScheme='red'>
-                                                            Delete
-                                                        </Button>
-                                                    </PopoverBody>
-                                                </PopoverContent>
-                                            </Popover>
-                                        </HStack>
-                                    </Td>
-                                </Tr>)}
-                            </Tbody>
-                        </Table>
-                    </TableContainer>
+                                                <Popover placement='bottom-end' isLazy
+                                                         size='sm'>
+                                                    <PopoverTrigger>
+                                                        <IconButton size='sm' colorScheme='red' icon={<FaTrash />} aria-label='Delete Template' />
+                                                    </PopoverTrigger>
+
+                                                    <PopoverContent w='200px'>
+                                                        <PopoverArrow/>
+                                                        <PopoverHeader>Are you sure?</PopoverHeader>
+                                                        <PopoverBody>
+                                                            <Button w='100%' size='sm'
+                                                                    leftIcon={<FaTrash/>}
+                                                                    onClick={() => DeleteTemplate(template.id)}
+                                                                    colorScheme='red'>
+                                                                Delete
+                                                            </Button>
+                                                        </PopoverBody>
+                                                    </PopoverContent>
+                                                </Popover>
+                                            </HStack>
+                                        </Td>
+                                    </Tr>)}
+                                </Tbody>
+                            </Table>
+                        </TableContainer>
+
+                        <Pagination list={templates} page={page} setPage={setPage} />
+                    </>
 
                     <Text>You don&apos;t have any email templates.</Text>
                 </IfElse>
             </TitleCard>
+
+
 
             <EasyModal icon={GrTemplate} title='Create a Template' size='6xl' isOpen={modal.isOpen}
                        onClose={() => {
@@ -452,6 +573,8 @@ const Emails = ({ _data }) => {
                 </VStack>
             </EasyModal>
 
+
+
             <EasyModal icon={BsEnvelope} title='Send Template' isOpen={sendState.open} onClose={() => setSendState({ ...sendState, open: false, emails: [], templateId: null, affiliates: [] })}
                        footer={<Button onClick={SendTemplate} colorScheme='brand' rightIcon={<Icon as={FaArrowRight} ml={1} />}>Send Emails</Button>}>
                 <TitleOption title='Send to:'>
@@ -475,6 +598,50 @@ const Emails = ({ _data }) => {
 
                     <Text mt={2} fontSize={14}>* The email will be sent to all of your affiliates if you do not select anything.</Text>
                 </TitleOption>
+            </EasyModal>
+
+
+
+            <EasyModal size='4xl' icon={FaWrench} title='Configure SMTP' isOpen={smtpState.open} onClose={() => setSmtpState({ ...smtpState, open: false })}
+                       footer={
+                <HStack w='100%' justifyContent='space-between'>
+                    <Button isLoading={!smtpState.success && smtpState.loading} onClick={TestSMTP} leftIcon={<FaMagnifyingGlass />}>Test Configuration</Button>
+                    <Button isLoading={smtpState.success && smtpState.loading} isDisabled={!smtpState.success} colorScheme={smtpState.success ? 'brand' : 'gray'} onClick={SaveSMTP} leftIcon={<FaWrench />}>Save Changes</Button>
+                </HStack>
+            }>
+                <SimpleGrid spacing={8} columns={{ base: 1, lg: 2 }}>
+                    <VStack alignItems='stretch' spacing={4}>
+                        <TitleOption title='Host' subtitle='The SMTP address of your mail server.' category='Server'>
+                            <Input value={smtpState.server} onChange={(e) => setSmtpState({ ...smtpState, server: e.target.value })} placeholder='smtp.gmail.com' />
+                        </TitleOption>
+
+                        <TitleOption title='Port' subtitle='Most commonly 587 (TLS) or 465 (SSL).'>
+                            <Input value={smtpState.port} onChange={(e) => setSmtpState({ ...smtpState, port: e.target.value })} type='number' placeholder={587} />
+                        </TitleOption>
+                    </VStack>
+
+                    <VStack alignItems='stretch' spacing={4}>
+                        <TitleOption title='Name' subtitle='The display name of the sender.' category='Sender'>
+                            <Input value={smtpState.sender} onChange={(e) => setSmtpState({ ...smtpState, sender: e.target.value })} placeholder='Your Business Name' />
+                        </TitleOption>
+
+                        <TitleOption title='Email' subtitle='The email address used for sending emails.'>
+                            <Input value={smtpState.email} onChange={(e) => setSmtpState({ ...smtpState, email: e.target.value })}  autoComplete='false' type='email' placeholder='example@email.com' />
+                        </TitleOption>
+
+                        <TitleOption title='Password' subtitle='The password of the email address.'>
+                            <InputGroup>
+                                <Input value={smtpState.password} onChange={(e) => setSmtpState({ ...smtpState, password: e.target.value })}
+                                       type={smtpState.view ? 'text' : 'password'} autoComplete='false' placeholder='Password' />
+
+                                <InputRightAddon borderBottom='1px solid' borderColor='inherit' bg='transparent' px={0}>
+                                    <IconButton onClick={() => setSmtpState({ ...smtpState, view: !smtpState.view })} borderRadius='0'
+                                                icon={smtpState.view ? <FaEyeSlash/> : <FaEye />} variant='ghost' aria-label='Show / hide password' />
+                                </InputRightAddon>
+                            </InputGroup>
+                        </TitleOption>
+                    </VStack>
+                </SimpleGrid>
             </EasyModal>
         </>
     );

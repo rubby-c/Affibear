@@ -1,4 +1,4 @@
-import { theme as orig, extendTheme } from '@chakra-ui/react'
+import {theme as orig, extendTheme, withDefaultColorScheme, withDefaultProps} from '@chakra-ui/react'
 import e, { mode } from '@chakra-ui/theme-tools';
 
 import { Open_Sans, Rubik } from 'next/font/google';
@@ -49,6 +49,9 @@ const theme = {
     },
     components: {
         Button: {
+            baseStyle: {
+                borderRadius: '9999px'
+            },
             variants: {
                 solid: (props) => {
                     const { colorScheme: c } = props;
@@ -141,7 +144,10 @@ const theme = {
                         container,
                         icon: {
                             color: '#3b3f5c'
-                        }
+                        },
+                        spinner: {
+                            color: '#3b3f5c'
+                        },
                     }
                 }
             }
@@ -188,9 +194,45 @@ const theme = {
                     label: { display: 'block', textAlign: 'start' }
                 }
             }
+        },
+        Table: {
+            variants: {
+                striped: {
+                    baseStyle: {
+                        maxH: '80vh',
+                        overflowY: 'scroll'
+                    },
+                    tbody: {
+                        tr: {
+                            _odd: {
+                                td: {
+                                    background: 'unset'
+                                }
+                            },
+                            _even: {
+                                td: {
+                                    background: 'gray.50'
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        Tag: {
+            baseStyle: {
+                colorScheme: 'brand'
+            }
         }
     }
 };
 
-const Theme = extendTheme(theme);
+const Theme = extendTheme(
+    withDefaultColorScheme({
+        colorScheme: 'brand',
+        components: ['Tag']
+    }),
+    theme
+);
+
 export default Theme;
