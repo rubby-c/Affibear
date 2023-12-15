@@ -21,14 +21,10 @@ import Turnstile from "react-turnstile";
 import { useCookies } from "react-cookie";
 
 import Api, { TurnstileKey } from "../../../lib/api";
+import { TOAST_OPTIONS } from "@/lib/constants";
 
 const Auth = () => {
-    const toast = useToast({
-        position: 'top',
-        variant: 'notification',
-        duration: 9000,
-        isClosable: true
-    });
+    const toast = useToast(TOAST_OPTIONS);
 
     const [show, setShow] = React.useState(false);
     const [turnstile, setTurnstile] = React.useState(null);

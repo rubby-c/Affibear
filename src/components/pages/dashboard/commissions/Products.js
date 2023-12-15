@@ -23,7 +23,7 @@ import {GetCurrency, GetNumber} from "@/lib/helpers";
 import IfElse from "@/components/helpers/IfElse";
 import EasyModal from "@/components/elements/EasyModal";
 import TitleOption from "@/components/elements/TitleOption";
-import Api from "@/lib/api";
+import Api, {SendRequest} from "@/lib/api";
 import { TOAST_OPTIONS } from "@/lib/constants";
 import { useRouter } from "next/navigation";
 import {BsCart, BsCart4} from "react-icons/bs";
@@ -48,77 +48,94 @@ const Products = ({ _data }) => {
         if (state.name.length === 0)
             return;
 
-        const res = await Api.post('/website/commissions/products', state);
-        if (res.status === 200) {
-            modal.onClose();
+        await SendRequest(
+            toast,
+            'post',
+            `/website/commissions/products`,
+            state,
+            () => {
+                setData([...data, res.data]);
 
-            setData([...data, res.data]);
+                setState({
+                    id: null,
+                    name: '',
+                    type: 0,
+                    amount: undefined
+                });
 
-            setState({
-                id: null,
-                name: '',
-                type: 0,
-                amount: undefined
-            });
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have successfully added a product.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+                modal.onClose();
+            },
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'You have successfully added a product.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Adding..'
+                }
+            }
+        );
     }
 
     async function DeleteProduct(id) {
-        const res = await Api.delete(`/website/commissions/products?id=${id}`);
-        if (res.status === 200) {
-            setData(data.filter(i => i.id !== id));
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have successfully deleted a product.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'delete',
+            `/website/commissions/products?id=${id}`,
+            null,
+            () => setData(data.filter(i => i.id !== id)),
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'You have successfully deleted a product.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Deleting..'
+                }
+            }
+        );
     }
 
     async function EditProduct() {
-        const res = await Api.patch('/website/commissions/products', state);
+        await SendRequest(
+            toast,
+            'patch',
+            `/website/commissions/products`,
+            state,
+            () => {
+                const arr = [...data];
+                const idx = arr.findIndex(i => i.id === state.id);
 
-        if (res.status === 200) {
-            const arr = [...data];
-            const idx = arr.findIndex(i => i.id === state.id);
+                arr[idx] = state;
+                setData(arr);
 
-            arr[idx] = state;
-
-            setData(arr);
-
-            modal.onClose();
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have successfully updated a product.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+                modal.onClose();
+            },
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'You have successfully updated a product.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Updating..'
+                }
+            }
+        );
     }
 
     return (

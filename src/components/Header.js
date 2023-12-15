@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 
 import {FaBell, FaCheck, FaChevronDown, FaChevronUp, FaPlus, FaSignOutAlt, FaWrench} from 'react-icons/fa';
-import Api from '../lib/api';
+import Api, {SendRequest} from '../lib/api';
 
 import NextLink from 'next/link';
 import Image from 'next/image'
@@ -28,6 +28,7 @@ import EasyModal from './elements/EasyModal';
 import { redirect } from "next/navigation";
 import {BsGlobe, BsGlobe2, BsGlobeEuropeAfrica} from "react-icons/bs";
 import {TbGlobeFilled} from "react-icons/tb";
+import {TOAST_OPTIONS} from "@/lib/constants";
 
 const Notification = ({ timestamp, important, text, link }) => {
     return (
@@ -47,7 +48,7 @@ const Notification = ({ timestamp, important, text, link }) => {
 };
 
 const Header = ({ data, pc, sidebar }) => {
-    const toast = useToast();
+    const toast = useToast(TOAST_OPTIONS);
     const shopSelect = useDisclosure();
 
     async function SwitchWebsite(id) {
@@ -55,17 +56,27 @@ const Header = ({ data, pc, sidebar }) => {
             return;
         }
 
-        const res = await Api.get(`/website/switch?id=${id}`);
-
-        if (res.status === 200) {
-            window.location.reload();
-        } else {
-            toast({
-                title: `Failure`,
-                description: res.data,
-                status: 'error'
-            });
-        }
+        await SendRequest(
+            toast,
+            'get',
+            `/website/switch?id=${id}`,
+            null,
+            () => window.location.reload(),
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: ''
+                },
+                error: (err) => ({
+                    title: `Failure`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Switching..'
+                }
+            }
+        );
     }
 
     async function SignOut() {
@@ -88,9 +99,9 @@ const Header = ({ data, pc, sidebar }) => {
                         <PopoverTrigger>
                             <IconButton pos='relative' icon={
                                 <>
-                                    <Text fontWeight='medium' fontSize={11} w='20px' h='20px' lineHeight='20px' borderRadius='50%' pos='absolute' top='0' right='0' bg='red.200'>
+                                    {data.notifications.flatMap(i => i.data).length > 0 && <Text fontWeight='medium' fontSize={11} w='20px' h='20px' lineHeight='20px' borderRadius='50%' pos='absolute' top='0' right='0' bg='red.200'>
                                         {data.notifications.flatMap(i => i.data).length}
-                                    </Text>
+                                    </Text>}
 
                                     <FaBell />
                                 </>
@@ -127,21 +138,19 @@ const Header = ({ data, pc, sidebar }) => {
                                 </Box>
 
                                 <Box mx={2}>
-                                    <FaChevronDown/>
+                                    <FaChevronDown />
                                 </Box>
                             </HStack>
                         </MenuButton>
 
-                        <MenuList p={1}>
-                            <MenuItem as={Button} justifyContent='space-between' rightIcon={<FaWrench />}
-                                      onClick={shopSelect.onOpen}>
+                        <MenuList>
+                            <MenuItem as={Button} onClick={shopSelect.onOpen} borderRadius='none' justifyContent='space-between' rightIcon={<FaWrench />}>
                                 Select Website
                             </MenuItem>
 
                             <MenuDivider/>
 
-                            <MenuItem onClick={SignOut} as={Button} justifyContent='space-between'
-                                      rightIcon={<FaSignOutAlt />}>
+                            <MenuItem borderRadius='none' onClick={SignOut} as={Button} justifyContent='space-between' rightIcon={<FaSignOutAlt />}>
                                 Sign Out
                             </MenuItem>
                         </MenuList>
@@ -158,7 +167,7 @@ const Header = ({ data, pc, sidebar }) => {
                        }>
                 <VStack spacing={4}>
                     {data.websites.length > 0 && data.websites.filter(i => i.finished).map(website =>
-                        <HStack onClick={() => SwitchWebsite(website.Id)} p={2} key={website.id} w='100%'
+                        <HStack onClick={() => SwitchWebsite(website.id)} p={2} key={website.id} w='100%'
                                 variant='ghost' justifyContent='space-between' cursor='pointer'>
                             <HStack spacing={4}>
                                 {website.iconUrl &&

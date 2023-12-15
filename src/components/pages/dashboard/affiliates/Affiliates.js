@@ -40,7 +40,7 @@ import NextLink from "next/link";
 import { useRouter } from "next/navigation";
 
 import EasyModal from "@/components/elements/EasyModal";
-import Api from "@/lib/api";
+import Api, {SendRequest} from "@/lib/api";
 import TitleCard from "@/components/elements/TitleCard";
 import TitleOption from "@/components/elements/TitleOption";
 import { TOAST_OPTIONS } from "@/lib/constants";
@@ -77,60 +77,75 @@ const Affiliates = ({ data }) => {
     });
 
     async function AddAffiliate() {
-        const res = await Api.post('/website/affiliates', state.affiliate);
-        if (res.status === 200) {
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have added a new affiliate.'
-            });
+        await SendRequest(
+            toast,
+            'post',
+            `/website/affiliates`,
+            state.affiliate,
+            (res) => {
+                setState({
+                    ...state,
+                    affiliate: {
+                        ...state.affiliate,
+                        name: '',
+                        email: '',
+                        password: ''
+                    }
+                });
 
-            setState({
-                ...state,
-                affiliate: {
-                    ...state.affiliate,
-                    name: '',
-                    email: '',
-                    password: ''
+                const arr = [...list];
+                arr.push(res.data);
+
+                setList(arr);
+                setResults(arr);
+
+                add.onClose();
+            },
+            null,
+            {
+                success: {
+                    title: 'Success',
+                    description: 'You have added a new affiliate.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Adding..',
+                    description: 'Let\'s see how they\'re gonna do!'
                 }
-            });
-
-            const arr = [...list];
-            arr.push(res.data);
-
-            setList(arr);
-            setResults(arr);
-
-            add.onClose();
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+            }
+        );
     }
 
     async function DeleteAffiliate(id) {
-        const res = await Api.delete(`/website/affiliates?id=${id}`);
-
-        if (res.status === 200) {
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have deleted an affiliate.'
-            });
-
-            const arr = [...list].filter(i => i.id !== id);
-            setList(arr);
-            setResults(arr);
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'delete',
+            `/website/affiliates?id=${id}`,
+            null,
+            () => {
+                const arr = [...list].filter(i => i.id !== id);
+                setList(arr);
+                setResults(arr);
+            },
+            null,
+            {
+                success: {
+                    title: 'Success',
+                    description: 'You have deleted an affiliate.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Deleting..',
+                    description: 'Sad to see you go..'
+                }
+            }
+        );
     }
 
     const [search, setSearch] = React.useState('');
@@ -150,27 +165,32 @@ const Affiliates = ({ data }) => {
         if (state.invite.templateId === '' || state.invite.name === '' || state.invite.email === '')
             return;
 
-        const res = await Api.post('/website/invite-affiliate', {
-            templateId: state.invite.templateId,
-            name: state.invite.name,
-            email: state.invite.email
-        });
-
-        if (res.status === 200) {
-            setState({ ...state, invite: { ...state.invite, name: '', email: '' }});
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: `You have invited ${state.invite.name}.`
-            });
-        } else {
-            toast({
-                status: 'error',
-                title: 'Couldn\'t invite an affiliate.',
-                description: res.data.status ?? res.data
-            })
-        }
+        await SendRequest(
+            toast,
+            'post',
+            `/website/invite-affiliate`,
+            {
+                templateId: state.invite.templateId,
+                name: state.invite.name,
+                email: state.invite.email
+            },
+            () => setState({ ...state, invite: { ...state.invite, name: '', email: '' }}),
+            null,
+            {
+                success: {
+                    title: 'Success',
+                    description: `You have invited ${state.invite.name}.`
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Inviting..',
+                    description: 'Sending a nice email 🤗'
+                }
+            }
+        );
     }
 
     const [page, setPage] = React.useState(1);
@@ -178,7 +198,7 @@ const Affiliates = ({ data }) => {
     return (
         <>
             <TitleCard icon={<BiUser />} title='Affiliates' item={<HStack>
-                <Button size='sm' leftIcon={<FaEnvelope/>} onClick={async () => {
+                <Button size='sm' leftIcon={<FaEnvelope />} onClick={async () => {
                     const res = await Api.get('/website/email-templates');
 
                     const defaults = res.data.templates.find(i => i.name === 'Default Affiliate Invitation');

@@ -22,16 +22,12 @@ import Turnstile from "react-turnstile";
 import Api, { TurnstileKey } from '../../../lib/api';
 
 import { useRouter } from "next/navigation";
+import { TOAST_OPTIONS } from "@/lib/constants";
 
 const Auth = () => {
     const router = useRouter();
 
-    const toast = useToast({
-        position: 'top',
-        variant: 'notification',
-        duration: 9000,
-        isClosable: true
-    });
+    const toast = useToast(TOAST_OPTIONS);
 
     const [show, setShow] = React.useState(false);
     const [turnstile, setTurnstile] = React.useState(null);

@@ -36,7 +36,7 @@ import TitleCard from "@/components/elements/TitleCard";
 import TitleOption from "@/components/elements/TitleOption";
 import WideTitleOption from "@/components/elements/WideTitleOption";
 
-import Api from "@/lib/api";
+import Api, {SendRequest} from "@/lib/api";
 import { TOAST_OPTIONS } from "@/lib/constants";
 import {FaDollarSign, FaInfoCircle, FaPlus, FaTrash, FaWrench} from "react-icons/fa";
 import NextLink from "next/link";
@@ -64,61 +64,75 @@ const Commissions = ({ data }) => {
     });
 
     async function SaveCommissions() {
-        const res = await Api.post('/website/commissions', data.commissions);
-
-        if (res.status === 200) {
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'Your changes have been saved.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'post',
+            `/website/commissions`,
+            data.commissions,
+            null,
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'Your changes have been saved.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Saving..'
+                }
+            }
+        );
     }
 
     async function CreateRoyalty() {
-        const res = await Api.post(`/website/royalties`, royalty);
-
-        if (res.status === 200) {
-            setRoyalties([...royalties, royalty]);
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have successfully created a royalty.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'post',
+            `/website/royalties`,
+            royalty,
+            () => setRoyalties([...royalties, royalty]),
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'You have successfully created a royalty.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Creating..'
+                }
+            }
+        );
     }
 
     async function DeleteRoyalty(id) {
-        const res = await Api.delete(`/website/royalties?id=${id}`);
-
-        if (res.status === 200) {
-            setRoyalties(royalties.filter(i => i.id !== id));
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have successfully deleted a royalty.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'delete',
+            `/website/royalties?id=${id}`,
+            null,
+            () => setRoyalties(royalties.filter(i => i.id !== id)),
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'You have successfully deleted a royalty.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Deleting..'
+                }
+            }
+        );
     }
 
     const [page, setPage] = React.useState(1);
@@ -179,7 +193,11 @@ const Commissions = ({ data }) => {
                                         {commissions.type === 1 && <>
                                             <InputGroup size='sm'>
                                                 <InputLeftAddon>{GetCurrency()}</InputLeftAddon>
-                                                <Input w='150px' value={commissions.amount}/>
+                                                <Input type='number' w='150px' value={commissions.amount}
+                                                       onChange={(e) => setCommissions({
+                                                           ...commissions,
+                                                           amount: e.target.value
+                                                       })}/>
                                             </InputGroup>
 
                                             <Checkbox size='sm' isChecked={commissions.applyIndividual}
@@ -197,13 +215,6 @@ const Commissions = ({ data }) => {
                                     <Button as={NextLink} href='/dashboard/commissions/products' leftIcon={<FaWrench />} my={2}>Manage</Button>
                                 </TitleOption>
                             </SimpleGrid>
-
-                            <WideTitleOption title='Payout Schedule' subtitle='The period between generating automated payouts.'>
-                                <Select>
-                                    <option value={0}>Monthly</option>
-                                    <option value={1}>Weekly</option>
-                                </Select>
-                            </WideTitleOption>
                         </TabPanel>
 
                         <TabPanel p={0} pt={4}>
@@ -285,7 +296,11 @@ const Commissions = ({ data }) => {
                             {royalty.type === 1 && <>
                                 <InputGroup size='sm'>
                                     <InputLeftAddon>{GetCurrency()}</InputLeftAddon>
-                                    <Input value={royalty.amount}/>
+                                    <Input type='number' value={royalty.amount}
+                                           onChange={(e) => setRoyalty({
+                                               ...royalty,
+                                               amount: e.target.value
+                                           })} />
                                 </InputGroup>
 
                                 <Checkbox size='sm' isChecked={royalty.applyIndividual}

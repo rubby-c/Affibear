@@ -60,7 +60,7 @@ import TitleOption from "@/components/elements/TitleOption";
 import EasyModal from "@/components/elements/EasyModal";
 import IfElse from "@/components/helpers/IfElse";
 
-import Api from "@/lib/api";
+import Api, {SendRequest} from "@/lib/api";
 import { GetAffiliateChart } from "@/lib/charts";
 import { COUNTRIES, FLAG_CODE_TABLE, TOAST_OPTIONS } from "@/lib/constants";
 import {
@@ -106,34 +106,35 @@ const Affiliate = ({ _stats, _data }) => {
     });
     
     const [affiliate, setAffiliate] = React.useState(_data);
-    const [stats, setStats] = React.useState(_stats);
-    
-    // region Pagination
-
-    const [page, setPage] = React.useState(1);
-
-
-    
-    // endregion
+    const [stats, setStats] = React.useState(_stats.sort((a, b) => new Date(a.date) - new Date(b.date)));
 
     async function Approve(bool) {
-        const res = await Api.patch(`/website/affiliates/approval`, {
-            id: affiliate.id,
-            approved: bool
-        });
-
-        if (res.status === 200) {
-            setAffiliate({
+        await SendRequest(
+            toast,
+            'patch',
+            '/website/affiliates/approval',
+            {
+                id: affiliate.id,
+                approved: bool
+            },
+            () => setAffiliate({
                 ...affiliate,
                 approved: bool
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+            }),
+            null,
+            {
+                success: {
+                    title: 'Success'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Loading..'
+                }
+            }
+        );
     }
 
     async function ChangeCoupon() {
@@ -143,25 +144,36 @@ const Affiliate = ({ _stats, _data }) => {
             return;
         }
 
-        const res = await Api.patch('/website/affiliates/coupon', {
-            affiliateId: affiliate.id,
-            coupon: state.coupon.current.value.toUpperCase()
-        });
-
-        if (res.status === 200) {
-            setAffiliate({
-                ...affiliate,
+        await SendRequest(
+            toast,
+            'patch',
+            '/website/affiliates/coupon',
+            {
+                affiliateId: affiliate.id,
                 coupon: state.coupon.current.value.toUpperCase()
-            });
+            },
+            () => {
+                setAffiliate({
+                    ...affiliate,
+                    coupon: state.coupon.current.value.toUpperCase()
+                });
 
-            modals.coupon.onClose();
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+                modals.coupon.onClose();
+            },
+            null,
+            {
+                success: {
+                    title: 'Success'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Loading..'
+                }
+            }
+        );
     }
 
     const state = {
@@ -205,61 +217,71 @@ const Affiliate = ({ _stats, _data }) => {
             };
         }
 
-        const res = await Api.post('/website/conversions', {
-            affiliateId: affiliate.id,
-            order: {
-                commission: state.conversions.commission.current.value,
-                isRoyalty: state.conversions.isRoyalty.current.checked,
-                product: {
-                    name: state.conversions.productName.current.value,
-                    quantity: state.conversions.quantity.current.value,
-                    total: state.conversions.total.current.value,
-                    subTotal: state.conversions.subtotal.current.value
+        await SendRequest(
+            toast,
+            'post',
+            '/website/affiliates/coupon',
+            {
+                affiliateId: affiliate.id,
+                order: {
+                    commission: state.conversions.commission.current.value,
+                    isRoyalty: state.conversions.isRoyalty.current.checked,
+                    product: {
+                        name: state.conversions.productName.current.value,
+                        quantity: state.conversions.quantity.current.value,
+                        total: state.conversions.total.current.value,
+                        subTotal: state.conversions.subtotal.current.value
+                    },
+                    customer
+                }
+            },
+            () => setStats(res.data),
+            null,
+            {
+                success: {
+                    title: 'Success',
+                    description: 'You have successfully added a custom conversion.'
                 },
-                customer
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Loading..'
+                }
             }
-        });
-
-        if (res.status === 200) {
-            setStats(res.data);
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have successfully added a custom conversion.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        );
     }
 
     async function DeleteConversion(id) {
-        const res = await Api.delete(`/website/conversions?affiliateId=${affiliate.id}&id=${id}`);
+        await SendRequest(
+            toast,
+            'delete',
+            `/website/conversions?affiliateId=${affiliate.id}&id=${id}`,
+            null,
+            () => {
+                const arr = [...stats];
 
-        if (res.status === 200) {
-            const arr = [...stats];
+                const idx = arr.findIndex(x => x.orders.findIndex(y => y.orderId === id) !== -1);
+                arr[idx].orders = arr[idx].orders.filter(x => x.orderId !== id);
 
-            const idx = arr.findIndex(x => x.orders.findIndex(y => y.orderId === id) !== -1);
-            arr[idx].orders = arr[idx].orders.filter(x => x.orderId !== id);
-
-            setStats(arr);
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have successfully deleted a conversion.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+                setStats(arr);
+            },
+            null,
+            {
+                success: {
+                    title: 'Success',
+                    description: 'You have successfully deleted a conversion.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Loading..'
+                }
+            }
+        );
     }
     
     // endregion
@@ -267,64 +289,97 @@ const Affiliate = ({ _stats, _data }) => {
     // region Payouts
     
     async function AddCustomPayout() {
-        const res = await Api.post('/website/payouts', {
-            affiliateId: affiliate.id,
-            amount: state.payout.amount.current.value,
-            details: state.payout.details.current.value,
-        });
-
-        if (res.status === 200) {
-            setAffiliate({ ...affiliate, payouts: [...affiliate.payouts, res.data] });
-            modals.payout.onClose();
-
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have added a custom payout.'
-            });
-        }
+        await SendRequest(
+            toast,
+            'post',
+            `/website/payouts`,
+            {
+                affiliateId: affiliate.id,
+                amount: state.payout.amount.current.value,
+                details: state.payout.details.current.value,
+            },
+            (res) => {
+                setAffiliate({ ...affiliate, payouts: [...affiliate.payouts, res.data] });
+                modals.payout.onClose();
+            },
+            null,
+            {
+                success: {
+                    title: 'Success',
+                    description: 'You have created a custom payout.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Creating..'
+                }
+            }
+        );
     }
 
     async function MarkPayout(item, paid) {
-        const res = await Api.patch('/website/payouts', {
-            affiliateId: affiliate.id,
-            payoutId: item.id,
-            paid,
-            amount: item.amount,
-            details: item.details
-        });
+        await SendRequest(
+            toast,
+            'patch',
+            `/website/payouts`,
+            {
+                affiliateId: affiliate.id,
+                payoutId: item.id,
+                paid,
+                amount: item.amount,
+                details: item.details
+            },
+            () => {
+                const idx = affiliate.payouts.findIndex(i => i.id === item.id);
+                const arr = [...affiliate.payouts];
+                arr[idx].paid = paid;
 
-        if (res.status === 200) {
-            const idx = affiliate.payouts.findIndex(i => i.id === item.id);
-            const arr = [...affiliate.payouts];
-            arr[idx].paid = paid;
-
-            setAffiliate({ ...affiliate, payouts: arr });
-            modals.payout.onClose();
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+                setAffiliate({ ...affiliate, payouts: arr });
+                modals.payout.onClose();
+            },
+            {
+                success: {
+                    title: 'Success'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Marking..'
+                }
+            }
+        );
     }
 
     async function DeletePayout(payoutId) {
-        const res = await Api.delete(`/website/payouts?affiliateId=${affiliate.id}&id=${payoutId}`);
+        await SendRequest(
+            toast,
+            'delete',
+            `/website/payouts?affiliateId=${affiliate.id}&id=${payoutId}`,
+            null,
+            () => {
+                const arr = affiliate.payouts.filter(i => i.id !== payoutId);
 
-        if (res.status === 200) {
-            const arr = affiliate.payouts.filter(i => i.id !== payoutId);
-
-            setAffiliate({ ...affiliate, payouts: arr });
-            modals.payout.onClose();
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+                setAffiliate({ ...affiliate, payouts: arr });
+                modals.payout.onClose();
+            },
+            {
+                success: {
+                    title: 'Success',
+                    description: 'You have successfully deleted a payout.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Deleting..'
+                }
+            }
+        );
     }
     
     // endregion
@@ -337,6 +392,8 @@ const Affiliate = ({ _stats, _data }) => {
 
     const filteredStats = stats.filter(i => i.date >= GetDateFormat(range.startDate) && i.date <= GetDateFormat(range.endDate));
     const orders = filteredStats.flatMap(i => i.orders);
+
+    const [page, setPage] = React.useState(1);
 
     return (
         <>
@@ -562,8 +619,7 @@ const Affiliate = ({ _stats, _data }) => {
                     </SimpleGrid>
                 </TitleCard>
 
-                <Tabs size='sm' tabIndex={tab} onChange={(num) => setTab(num)} variant='soft-rounded' colorScheme='gray'
-                      isLazy>
+                <Tabs size='sm' tabIndex={tab} onChange={(num) => setTab(num)} variant='soft-rounded' colorScheme='gray' isLazy>
                     <TitleCard title={<TabList as={HStack}>
                         <Tab py={2} cursor='pointer' as={HStack}>
                             <FaShoppingBasket/>
@@ -710,7 +766,7 @@ const Affiliate = ({ _stats, _data }) => {
 
                                             <Tbody>
                                                 {affiliate.payouts
-                                                    .filter(i => new Date(i.createdAt) >= range.startDate && new Date(i.date) <= range.endDate)
+                                                    .filter(i => new Date(i.createdAt) >= range.startDate && new Date(i.createdAt) <= range.endDate)
                                                     .map((payout, idx) => <Tr key={idx}>
                                                     <Td>{new Date(payout.updatedAt ?? payout.createdAt).toLocaleString()}</Td>
                                                     <Td>

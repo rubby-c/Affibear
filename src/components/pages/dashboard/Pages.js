@@ -19,7 +19,7 @@ import { FaEye, FaSave } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { BiScreenshot } from "react-icons/bi";
 
-import Api from "@/lib/api";
+import Api, {SendRequest} from "@/lib/api";
 
 import ColorPicker from "@/components/elements/ColorPicker";
 import TitleCard from "@/components/elements/TitleCard";
@@ -45,20 +45,27 @@ const Pages = ({ _data }) => {
     });
 
     async function Update() {
-        const res = await Api.post('/website/modify', data);
-        if (res.status === 200) {
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'Your changes have been saved.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'post',
+            `/website/modify`,
+            data,
+            null,
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'Your changes have been saved.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Saving..'
+                }
+            }
+        );
     }
 
     async function UpdatePreviews() {

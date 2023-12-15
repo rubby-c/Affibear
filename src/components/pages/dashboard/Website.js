@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react';
-import Api from "../../../lib/api";
+import Api, {SendRequest} from "../../../lib/api";
 import {
     Badge,
     Box,
@@ -116,21 +116,27 @@ const Website = ({ _data }) => {
     const [data, setData] = React.useState(_data);
 
     async function ChangePrefix() {
-        const res = await Api.patch(`/website/prefix?prefix=${data.prefix}`);
-
-        if (res.status === 200) {
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'You have changed your website prefix.'
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'patch',
+            `/website/prefix?prefix=${data.prefix}`,
+            null,
+            null,
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'You have changed your website prefix.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Changing..'
+                }
+            }
+        );
     }
 
     const [state, setState] = React.useState({
@@ -146,32 +152,33 @@ const Website = ({ _data }) => {
             announceLoading: true
         });
 
-        const res = await Api.patch(`/website/announce-custom-domain?host=${state.customDomain}`);
-
-        if (res.status === 200) {
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: res.data
-            });
-
-            setState({
+        await SendRequest(
+            toast,
+            'patch',
+            `/website/announce-custom-domain?host=${state.customDomain}`,
+            null,
+            () => setState({
                 ...state,
                 customDomainSet: true,
                 announceLoading: false
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-
-            setState({
+            }),
+            () => setState({
                 ...state,
                 announceLoading: false
-            });
-        }
+            }),
+            {
+                success: {
+                    title: `Success`
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Changing..'
+                }
+            }
+        );
     }
 
     async function SetCustomDomain() {
@@ -180,67 +187,115 @@ const Website = ({ _data }) => {
             loading: true
         });
 
-        const res = await Api.patch(`/website/custom-domain?host=${state.customDomain}`);
+        await SendRequest(
+            toast,
+            'patch',
+            `/website/custom-domain?host=${state.customDomain}`,
+            null,
+            () => {
+                if (typeof res.data !== 'string') {
+                    location.reload();
+                    return;
+                }
 
-        if (res.status === 200) {
-            if (typeof res.data !== 'string') {
-                location.reload();
-                return;
+                setState({
+                    ...state,
+                    customDomainSet: true,
+                    loading: false
+                });
+            },
+            () => setState({
+                ...state,
+                loading: false
+            }),
+            {
+                success: {
+                    title: `Success`,
+                    description: ''
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Loading..'
+                }
             }
-
-            setState({
-                ...state,
-                customDomainSet: true,
-                loading: false
-            });
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-
-            setState({
-                ...state,
-                loading: false
-            });
-        }
+        );
     }
 
     async function Save() {
         setDefaults(data);
 
-        const res = await Api.post('/website/modify', data);
-
-        if (res.status === 200) {
-            toast({
-                title: 'Success',
-                status: 'success',
-                description: 'Your changes have been saved.'
-            });
-
-            localStorage.setItem('affibear-currency', data.settings.currency);
-        } else {
-            toast({
-                title: 'Error',
-                status: 'error',
-                description: res.data.status ?? res.data
-            });
-        }
+        await SendRequest(
+            toast,
+            'post',
+            `/website/modify`,
+            data,
+            () => localStorage.setItem('affibear-currency', data.settings.currency),
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'Your changes have been saved.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Loading..'
+                }
+            }
+        );
     }
 
     async function DeactivateWebsite() {
-        const res = await Api.patch(`/website/deactivate?id=${data.id}`);
-        if (res.status === 200) {
-            location.reload();
-        }
+        await SendRequest(
+            toast,
+            'patch',
+            `/website/deactivate?id=${data.id}`,
+            null,
+            () => location.reload(),
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: data.active ? 'Your website has been deactivated.' : 'Your website has been activated.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: data.active ? 'Deactivating..' : 'Activating..'
+                }
+            }
+        );
     }
 
     async function DeleteWebsite() {
-        const res = await Api.delete(`/website/delete`);
-        if (res.status === 200) {
-            router.push('/dashboard');
-        }
+        await SendRequest(
+            toast,
+            'delete',
+            `/website/delete`,
+            null,
+            () => router.push('/dashboard'),
+            null,
+            {
+                success: {
+                    title: `Success`,
+                    description: 'Your website has been deleted.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Deleting..'
+                }
+            }
+        );
     }
 
     React.useEffect(() => {

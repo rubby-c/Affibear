@@ -18,7 +18,7 @@ import {
 import {FaArrowRight, FaChevronLeft, FaWrench} from "react-icons/fa";
 import {CUSTOM_SDK_CODE, CUSTOM_SDK_CODE2, TOAST_OPTIONS} from "@/lib/constants";
 import {FaMagnifyingGlass} from "react-icons/fa6";
-import Api from "@/lib/api";
+import Api, {SendRequest} from "@/lib/api";
 import hljs from "highlight.js";
 import EasyModalTitle from "@/components/elements/EasyModalTitle";
 import TitleOption from "@/components/elements/TitleOption";
@@ -94,26 +94,35 @@ const CreateWebsite = ({ _data }) => {
             loading: true
         });
 
-        const res = await Api.get(`/integrations/check-prefix?prefix=${setup.prefix}`);
-        if (res.status === 200) {
-            setState({
+        await SendRequest(
+            toast,
+            'get',
+            `/integrations/check-prefix?prefix=${setup.prefix}`,
+            state,
+            () => setState({
                 ...state,
                 loading: false,
                 prev: state.step,
                 step: `select-sdk`
-            });
-        } else {
-            toast({
-                title: `Error`,
-                description: `There has been an error with our servers. Please wait a bit and try again.`,
-                status: 'error'
-            });
-
-            setState({
+            }),
+            () => setState({
                 ...state,
                 loading: false
-            });
-        }
+            }),
+            {
+                success: {
+                    title: `Success`,
+                    description: 'You have successfully updated a product.'
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Updating..'
+                }
+            }
+        );
     }
 
     async function FinishSetup() {
@@ -122,28 +131,36 @@ const CreateWebsite = ({ _data }) => {
             loading: true
         });
 
-        const res = await Api.post('/website/finish-setup', {
-            id: setup.id,
-            name: setup.name,
-            url: setup.url,
-            prefix: setup.prefix,
-            sdk: setup.sdk
-        });
-
-        if (res.status === 200) {
-            redirect('/dashboard');
-        } else {
-            toast({
-                title: `Error`,
-                description: res.data.status ?? res.data,
-                status: 'error'
-            });
-
-            setState({
+        await SendRequest(
+            toast,
+            'post',
+            `/website/finish-setup`,
+            {
+                id: setup.id,
+                name: setup.name,
+                url: setup.url,
+                prefix: setup.prefix,
+                sdk: setup.sdk
+            },
+            () => redirect('/dashboard'),
+            () => setState({
                 ...state,
                 loading: false
-            });
-        }
+            }),
+            {
+                success: {
+                    title: `Success`,
+                    description: ''
+                },
+                error: (err) => ({
+                    title: `Error`,
+                    description: err.status ?? err
+                }),
+                loading: {
+                    title: 'Loading..'
+                }
+            }
+        );
     }
 
     return (

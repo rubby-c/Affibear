@@ -11,7 +11,7 @@ const Page = async () => {
     });
 
     return (
-        <Payouts _data={res.data} />
+        <Payouts data={res.data} />
     );
 };
 
