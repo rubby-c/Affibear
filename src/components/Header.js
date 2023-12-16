@@ -14,9 +14,11 @@ import {
     Text, useDisclosure, useToast, VStack
 } from '@chakra-ui/react';
 
-import {FaBell, FaCheck, FaChevronDown, FaChevronUp, FaPlus, FaSignOutAlt, FaWrench} from 'react-icons/fa';
-import Api, {SendRequest} from '../lib/api';
+import { FaBell, FaCheck, FaChevronDown, FaChevronUp, FaPlus, FaSignOutAlt, FaWrench } from 'react-icons/fa';
+import Api, { SendRequest } from '../lib/api';
 
+import {TOAST_OPTIONS} from "@/lib/constants";
+import { useRouter } from 'next/navigation'
 import NextLink from 'next/link';
 import Image from 'next/image'
 
@@ -25,10 +27,8 @@ import relativeTime from 'dayjs/plugin/relativeTime'
 dayjs.extend(relativeTime);
 
 import EasyModal from './elements/EasyModal';
-import { redirect } from "next/navigation";
-import {BsGlobe, BsGlobe2, BsGlobeEuropeAfrica} from "react-icons/bs";
+
 import {TbGlobeFilled} from "react-icons/tb";
-import {TOAST_OPTIONS} from "@/lib/constants";
 
 const Notification = ({ timestamp, important, text, link }) => {
     return (
@@ -48,6 +48,7 @@ const Notification = ({ timestamp, important, text, link }) => {
 };
 
 const Header = ({ data, pc, sidebar }) => {
+    const router = useRouter();
     const toast = useToast(TOAST_OPTIONS);
     const shopSelect = useDisclosure();
 
@@ -162,8 +163,8 @@ const Header = ({ data, pc, sidebar }) => {
                        footer={
                            <Button size='sm' onClick={() => {
                                shopSelect.onClose();
-                               redirect('/dashboard/create-website');
-                           }} alignSelf='end' leftIcon={<FaPlus/>}>Create new website</Button>
+                               router.push('/dashboard/create-website');
+                           }} alignSelf='end' leftIcon={<FaPlus />}>Create new website</Button>
                        }>
                 <VStack spacing={4}>
                     {data.websites.length > 0 && data.websites.filter(i => i.finished).map(website =>

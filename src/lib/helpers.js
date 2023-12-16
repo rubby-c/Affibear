@@ -64,7 +64,7 @@ export function GetCurrency() {
 export function GetNumber(num) {
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: isNode ? 'USD' : localStorage.getItem('affibear-currency'),
+        currency: isNode ? 'USD' : localStorage.getItem('affibear-currency') ?? 'USD',
     });
 
     return (

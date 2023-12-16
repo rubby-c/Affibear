@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import Dashboard from "@/components/pages/dashboard/Dashboard";
 
 const Page = async () => {
-    const res = await Api.get('/dashboard', {
+    const res = await Api.get('/website/dashboard', {
         headers: {
             Cookie: cookies().toString()
         }

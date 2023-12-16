@@ -169,7 +169,7 @@ const CreateWebsite = ({ _data }) => {
                 switch(state.step) {
                     case 'start':
                         return (
-                            <TitleCard title='❤️ Welcome to Affibear' item={
+                            <TitleCard icon={<FaWrench />} title='Create a new website' item={
                                 <Button isDisabled={!setup.url.match(regex) || setup.name === '' && setup.prefix === ''}
                                         rightIcon={<FaArrowRight/>} onClick={CheckWebsite}>Continue</Button>
                             }>

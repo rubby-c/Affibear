@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 const Layout = async ({ children }) => {
-    const res = await Api.get('/dashboard/header', {
+    const res = await Api.get('/website/header', {
         headers: {
             Cookie: cookies().toString()
         }

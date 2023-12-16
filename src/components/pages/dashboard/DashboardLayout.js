@@ -16,19 +16,22 @@ import {
 import Header from "../../Header";
 import Footer from "../../Footer";
 import NextLink from "next/link";
-import { RiBearSmileLine } from "react-icons/ri";
+
 import { BiCog, BiDollarCircle, BiScreenshot, BiStats, BiUser } from "react-icons/bi";
 import { BsEnvelope, BsPercent } from "react-icons/bs";
 
+import Logo from '../../../../public/logo-name.svg'
+import Image from "next/image";
+
 const NavCategory = ({ children }) => {
     return (
-        <Text my={4} ms={4} w='100%' textAlign='start' letterSpacing='1.25px' color='gray.500'>{children}</Text>
+        <Text my={4} ms={4} fontWeight='medium' w='100%' textAlign='start' color='gray.600'>{children}</Text>
     );
 };
 
 const NavButton = ({ icon, href, children }) => {
     return (
-        <Button w='100%' variant='ghost' fontWeight='normal' colorScheme='brand'
+        <Button w='100%' variant='ghost' fontWeight='medium' colorScheme='brand'
                 leftIcon={<Icon fontSize='xl' as={icon} mr={2} />} justifyContent='start' color='var(--body-text)'
                 as={NextLink} href={href}>
             {children}
@@ -39,10 +42,9 @@ const NavButton = ({ icon, href, children }) => {
 const SidebarContent = ({ payouts, pc, isDisabled }) => {
     return (
         <Box px={pc ? 4 : 8} py={8}>
-            <HStack w='100%' justifyContent='center' mb={8}>
-                <RiBearSmileLine fontSize={28}/>
-                <Text fontWeight='medium' letterSpacing='1.5px' fontSize='xl'>Affibear</Text>
-            </HStack>
+            <Box px={4} mb={6}>
+                <Image height={50} src={Logo} alt='Afficone logo' />
+            </Box>
 
             <VStack w='100%' pointerEvents={isDisabled ? 'none' : 'unset'} opacity={isDisabled ? 0.5 : 1}>
                 <NavButton icon={BiStats} href='/dashboard'>Dashboard</NavButton>

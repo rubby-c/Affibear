@@ -6,8 +6,12 @@ export const TurnstileKey = '0x4AAAAAAANIL0qMZ2zcfQsA';
 export const Production = false;
 
 // This is like this because of local vs browser requests on production.
+
+export const BASE_URL = isNode ? 'https://127.0.0.1:1338' : 'https://api.afficone.test';
+export const FRONTEND_BASE_URL = isNode ? 'https://127.0.0.1:1337' : 'https://afficone.test';
+
 const Api = axios.create({
-    baseURL: isNode ? 'https://127.0.0.1:1338' : 'https://api.affibear.test',
+    baseURL: BASE_URL,
     httpsAgent: new https.Agent({
         rejectUnauthorized: false // CHANGE
     })

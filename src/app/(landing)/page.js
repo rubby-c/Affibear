@@ -2,7 +2,7 @@ import { Box, Button, Heading, Text, VStack } from "@chakra-ui/react";
 
 export default function Home() {
     return (
-        <Box bg='var(--gray-4)'>
+        <Box>
             <VStack p={16} mx='auto' maxW={1280}>
                 <Heading mb={4} textAlign='center' size='4xl'>All-in-One Affiliate Management Software</Heading>
 

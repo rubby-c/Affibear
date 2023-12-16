@@ -25,8 +25,8 @@ const theme = {
         })
     },
     fonts: {
-        heading: `${font.style.fontFamily}, sans-serif`,
-        body: `${bodyFont.style.fontFamily}, sans-serif`
+        heading: `${font.style.fontFamily}, monospace`,
+        body: `${bodyFont.style.fontFamily}, monospace`
     },
     breakpoints: {
         base: '0em', // 0px
@@ -38,6 +38,7 @@ const theme = {
     },
     colors: {
         brand: {
+            25: '#f9fffb',
             50: '#F0FFF4',
             100: '#C6F6D5',
             200: '#9AE6B4',
@@ -99,8 +100,8 @@ const theme = {
             },
             variants: {
                 jumpy: {
-                    opacity: 0.75,
-                    fontWeight: 'medium',
+                    opacity: 0.8,
+                    fontWeight: 'bold',
                     _hover: {
                         opacity: 1,
                         transform: 'scale(1.05, 1.05)',

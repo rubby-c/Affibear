@@ -31,7 +31,13 @@
     "react-drag-drop-files": "^2.3.10",
     "react-email-editor": "^1.7.9",
     "react-icons": "^4.11.0",
-    "react-turnstile": "^1.1.2"
+    "react-markdown": "^9.0.1",
+    "react-share": "^5.0.3",
+    "react-slugify": "^3.0.3",
+    "react-turnstile": "^1.1.2",
+    "remark-gfm": "^4.0.0",
+    "remark-toc": "^9.0.0",
+    "remark-unwrap-images": "^4.0.0"
   },
   "devDependencies": {
     "@types/node": "20.9.0",

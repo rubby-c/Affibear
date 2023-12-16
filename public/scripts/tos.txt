@@ -1,0 +1,76 @@
+## Afficone Terms of Service
+
+> Last updated: December 16, 2023
+
+**Introduction**
+
+These Terms of Service are a contract between you and Afficone Inc. By using the Afficone website (“Site”) and any services accessible from the Afficone Site (collectively, the "Services"), you are agreeing to be bound by the following Terms of Service. If a user violates any of the terms outlined below, we reserve the right to cancel accounts or bar access to accounts without notice. If you do not agree to these terms, please do not use our Services.
+
+**Your Account**
+
+- You must be a human. Accounts registered by "bots" or other automated methods are not permitted.
+- You must provide truthful, verifiable information. Accounts registered under fake names or company names (including 'Test', 'TBD', etc.) are not permitted.
+- You must be 13 years of age or older.
+- You must provide a valid email address, along with any other information required by Afficone during the registration process.
+- You are responsible for maintaining the security of your account and password. Afficone will not be liable for any loss or damage from your failure to comply with this security obligation. Personally identifiable information submitted by you shall be subject to our Privacy Policy.
+- You may not use the Afficone Site for any illegal or unauthorized purpose. You must not, in the use of the Afficone Site, violate any laws in your jurisdiction (including but not limited to copyright laws).
+
+**Payments, Refunds, Upgrading, and Downgrading**
+
+Unless otherwise arranged with an Afficone representative, a valid credit card is required for paying accounts. Affiliate accounts are not required to provide a credit card number. The Afficone Service is billed in advance in accordance with our pricing schedule and all monthly and annual payments are nonrefundable. There will be no refunds or credits for partial periods of service, upgrade/downgrade refunds, or refunds for service periods unused with an open account. At Afficone’s discretion, an exception may be made within the first 30 days of service. All fees are exclusive of all taxes, levies, or duties imposed by taxing authorities, and you shall be responsible for payment of all such taxes, levies, or duties. You agree to pay for any such taxes that might be applicable to your use of the Afficone Site and payments made by you herein.
+
+**Violation of these Terms of Service**
+
+Afficone reserves the right to investigate and prosecute violations of any of these Terms of Service to the fullest extent of the law. Afficone may involve and cooperate with law enforcement authorities in prosecuting users who violate the Terms of Service. You acknowledge that Afficone has no obligation to prescreen or monitor your access to or use of the Afficone Site or any information, materials, or other content provided or made available through the Afficone Site, but has the right to do so. You hereby agree that Afficone may, in the exercise of Afficone sole discretion, remove or delete any entries, information, materials, or other content that violates these Terms of Service or that is otherwise objectionable.
+
+**Cancellation**
+
+You are solely responsible for properly canceling your Account. To do so, the account owner may send an email to contact@afficone.com with "Account Cancellation" in the subject line. Any cancellation of your Account will result in the deactivation or deletion of your Account or your access to your Account, and the forfeiture and relinquishment of all Content in your Account. This information cannot be recovered from Afficone once your account is canceled. Please be aware that Afficone may for a time retain residual information in our backup and/or archival copies of our database. We will make reasonable commercial efforts to delete your information as soon as possible after you communicate that intention to us. Cancellations will take effect at the end of your current service period. Upon the commencement of a new service period, the Afficone Site will terminate without additional notice, and you will not be charged for any subsequent service periods. You will not be provided any refunds for unused time during your service period.
+
+**Termination**
+
+Afficone reserves the right to terminate any free Accounts that do not have any activity for sixty (60) days or trial accounts without a payment method thirty (30) days after expiration. Afficone, in its sole discretion, has the right to suspend or terminate your Account if you breach these Terms of Service. Afficone may refuse to provide you any current or future use of the Afficone Site, or any other Afficone service. Any termination of your Account will result in the deactivation or deletion of your Account, denied access to your Account, and the forfeiture and relinquishment of all Content in your Account. This information cannot be recovered from Afficone once your Account is terminated; however Afficone may for a time retain residual information in our backup and/or archival copies of our database.
+
+**Modifications to the Afficone Site and Prices**
+
+Afficone reserves the right at any time and from time to time to modify or discontinue, temporarily or permanently, the Afficone Site (or any part thereof) with or without notice. Prices of all Afficone plans, including but not limited to monthly subscription plan fees to the Afficone Site, are subject to change. If the price of your plan does change, your monthly fees will not. Afficone shall not be liable to you or to any third party for any modification, price change, suspension, or discontinuance of the Afficone Services. We reserve the right, in our sole discretion, to change, modify, add to, supplement, or delete any portion of these Terms of Service at any time, effective with or without prior notice; provided, however, that we will use reasonable efforts to provide you with notification of any material changes (as determined in our sole discretion) by email. If any future changes to these Terms of Service are unacceptable to you or cause you to no longer be in compliance, you must immediately stop using the Afficone Service. Your continued use of the Afficone Service following any revision to this Agreement constitutes your complete acceptance of any and all such changes. Any new features that augment or enhance the current Afficone Service, including the release of new tools and resources, will be subject to these Terms of Service.
+
+**Copyright and Content Ownership**
+
+We claim no intellectual property rights over the content submitted or created exclusively in your Afficone account. Any content that is yours remains yours. These Terms do not grant us any licenses or rights to your content except for the limited rights needed for us to provide the Services to you. The look and feel of the Afficone Site is © 2018 Afficone Inc., all rights reserved. You may not duplicate, copy, or reuse any portion of the code or visual design elements without express written permission.
+
+**Restrictions and Responsibilities**
+
+Customer will not, directly or indirectly: reverse engineer, decompile, disassemble, or otherwise attempt to discover the source code, object code or underlying structure, ideas, know-how, or algorithms relevant to the Services or any software, documentation or data related to the Services (“Software”); modify, translate, or create derivative works based on the Services or any Software (except to the extent expressly permitted by Company or authorized within the Services); use the Services or any Software for timesharing or service bureau purposes or otherwise for the benefit of a third; or remove any proprietary notices or labels.
+
+Although the Company has no obligation to monitor the Customer’s use of the Services, Company may do so and may prohibit any use of the Services it believes may be (or alleged to be) in violation of the foregoing.
+
+**Confidentiality and Proprietary Rights**
+
+Each party (the “Receiving Party”) understands that the other party (the “Disclosing Party”) has disclosed or may disclose business, technical or financial information relating to the Disclosing Party’s business (hereinafter referred to as “Proprietary Information” of the Disclosing Party).  Proprietary Information of Company includes non-public information regarding features, functionality and performance of the Service. Proprietary Information of Customer includes non-public data provided by Customer to Company to enable the provision of the Services (“Customer Data”). The Receiving Party agrees: (i) to take reasonable precautions to protect such Proprietary Information, and (ii) not to use (except in performance of the Services or as otherwise permitted herein) or divulge to any third person any such Proprietary Information.  The Disclosing Party agrees that the foregoing shall not apply with respect to any information after five (5) years following the disclosure thereof or any information that the Receiving Party can document (a) is or becomes generally available to the public, or (b) was in its possession or known by it prior to receipt from the Disclosing Party, or (c) was rightfully disclosed to it without restriction by a third party, or (d) was independently developed without the use of any Proprietary Information of the Disclosing Party or (e) is required to be disclosed by law.
+
+Company shall own and retain all rights, title, and interest in and to (a) the Services and Software, all improvements, enhancements, or modifications thereto, (b) any software, applications, inventions, or other technology developed in connection with Implementation Services or support, and (c) all intellectual property rights related to any of the foregoing.
+
+Notwithstanding anything to the contrary, Company shall have the right to collect and analyze data and other information relating to the provision, use, and performance of various aspects of the Services and related systems and technologies (including, without limitation, information concerning Customer Data and data derived therefrom), and  Company will be free (during and after the term hereof) to (i) use such information and data to improve and enhance the Services and for other development, diagnostic and corrective purposes in connection with the Services and other Company offerings, and (ii) disclose such data solely in aggregate or other de-identified form in connection with its business. No rights or licenses are granted except as expressly set forth herein.
+
+**Indemnification**
+
+You agree to indemnify and hold Afficone, its parents, subsidiaries, affiliates, officers, partners, and employees, harmless from any claim or demand, including reasonable attorneys' fees, made by any third party due to or arising out of your use of the Services, use of your account by any third party, the violation of the terms of use by you, or the infringement by you, or any third party using your account, of any intellectual property or other right of any person or entity.
+
+**Limitation of Liability**
+
+UNDER NO CIRCUMSTANCES, INCLUDING, BUT NOT LIMITED TO, NEGLIGENCE, SHALL AFFICONE OR ITS AFFILIATES, CONTRACTORS, EMPLOYEES, AGENTS, OR THIRD-PARTY PARTNERS OR SUPPLIERS, BE LIABLE TO YOU FOR ANY LOST PROFITS OR SPECIAL, INDIRECT, INCIDENTAL, CONSEQUENTIAL, OR EXEMPLARY DAMAGES THAT RESULT FROM OR RELATE TO THE SERVICES, INCLUDING YOUR USE THEREOF, OR ANY OTHER INTERACTIONS WITH AFFICONE, EVEN IF AFFICONE OR AN AFFICONE AUTHORIZED REPRESENTATIVE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES. IN NO EVENT SHALL AFFICONE OR ITS AFFILIATES, CONTRACTORS, EMPLOYEES, AGENTS, OR THIRD-PARTY PARTNERS OR SUPPLIERS’ TOTAL LIABILITY TO YOU FOR ALL DAMAGES, LOSSES, AND CAUSES OF ACTION ARISING OUT OF OR RELATING TO THIS AGREEMENT OR YOUR USE OF THE SITE OR SERVICES EXCEED EITHER THE AMOUNT OF FEES PAID BY YOU TO AFFICONE FOR THE SERVICES IN THE SIX (6) MONTH PERIOD PRECEDING THE EVENTS THAT GIVE RISE TO THE APPLICABLE CLAIM OR FIFTY U.S. DOLLARS, WHICHEVER IS GREATER.
+
+**Disclaimer**
+
+THE SERVICES, AFFICONE SITE, AND ITS CONTENTS ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT ANY WARRANTY OR REPRESENTATIONS OF ANY KIND, WHETHER EXPRESSED OR IMPLIED. AFFICONE IS A DISTRIBUTOR AND NOT A PUBLISHER OF THE CONTENT SUPPLIED BY THIRD PARTIES; AS SUCH, AFFICONE EXERCISES NO EDITORIAL CONTROL OVER SUCH CONTENT AND MAKES NO WARRANTY OR REPRESENTATION AS TO THE ACCURACY, RELIABILITY, OR CURRENCY OF ANY INFORMATION, CONTENT, SERVICE OR MERCHANDISE PROVIDED THROUGH OR ACCESSIBLE VIA THE SITE. WITHOUT LIMITING THE FOREGOING, AFFICONE SPECIFICALLY DISCLAIMS ALL WARRANTIES AND REPRESENTATIONS AS THE PUBLISHER OF ANY CONTENT TRANSMITTED ON OR IN CONNECTION WITH THE SITE OR ON SITES THAT MAY APPEAR AS LINKS ON THE SITE, OR THE SERVICES, INCLUDING WITHOUT LIMITATION ANY WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT OF THIRD PARTY RIGHTS. NO ORAL ADVICE OR WRITTEN INFORMATION GIVEN BY AFFICONE NOR ANY OF ITS AFFILIATES, EMPLOYEES, OFFICERS, DIRECTORS, AGENTS, OR THE LIKE SHALL CREATE A WARRANTY. PRICE AND AVAILABILITY INFORMATION IS SUBJECT TO CHANGE WITHOUT NOTICE.
+
+Company shall use reasonable efforts consistent with prevailing industry standards to maintain the Services in a manner that minimizes errors and interruptions in the Services and shall perform the Implementation Services in a professional and workmanlike manner. Services may be temporarily unavailable for scheduled maintenance or for unscheduled emergency maintenance, either by Company or by third-party providers, or because of other causes beyond Company’s reasonable control, but Company shall use reasonable efforts to provide advance notice in writing or by e-mail of any scheduled service disruption. HOWEVER, THE COMPANY DOES NOT WARRANT THAT THE SERVICES WILL BE UNINTERRUPTED OR ERROR FREE; NOR DOES IT MAKE ANY WARRANTY AS TO THE RESULTS THAT MAY BE OBTAINED FROM THE USE OF THE SERVICES. EXCEPT AS EXPRESSLY SET FORTH IN THIS SECTION, THE SERVICES AND IMPLEMENTATION SERVICES ARE PROVIDED “AS IS” AND COMPANY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+
+**Publicity**
+
+You grant Afficone the right to use your company name and logo as a reference for marketing or promotional purposes on our website and in other public or private communications, subject to your standard trademark usage guidelines as provided to us from time to time. If you don’t want to be listed, you may send an email to contact@afficone.com declining to be used as a reference.
+
+**Jurisdiction**
+
+These Terms of Service will be governed by and construed in accordance with the laws of the Province of Alberta, without giving effect to its conflict of law provisions or your actual state or country of residence. If for any reason a court of competent jurisdiction finds any provision or portion of the Terms of Service to be unenforceable, the remainder of the Terms of Service will continue in full force and effect. Any waiver of any provision of the Terms of Service will be effective only if in writing and signed by an authorized representative of Afficone.

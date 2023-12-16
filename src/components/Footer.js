@@ -9,9 +9,9 @@ import {
     VStack,
     HStack,
     Input,
-    IconButton,
+    IconButton, Tooltip,
 } from "@chakra-ui/react";
-import {FaEnvelope, FaInstagram, FaTwitter, FaYoutube} from "react-icons/fa";
+import { FaEnvelope, FaInstagram, FaTwitter, FaYoutube } from "react-icons/fa";
 
 import NextLink from 'next/link';
 
@@ -23,7 +23,7 @@ const SocialButton = ({ children, label, href }) => {
 
 const ListHeader = ({ children }) => {
     return (
-        <Text fontWeight='medium' fontSize='lg' mb={2}>
+        <Text className={headerFont.className} fontWeight='medium' fontSize='lg' mb={2}>
             {children}
         </Text>
     );
@@ -31,25 +31,31 @@ const ListHeader = ({ children }) => {
 
 const ListItem = ({ text, href }) => {
     return (
-        <Link color='inherit' variant='jumpy' as={NextLink} href={href}>
+        <Link className={itemFont.className} color='inherit' variant='jumpy' as={NextLink} href={href}>
             {text}
         </Link>
     );
 };
 
+import Logo from '../../public/logo-name.svg'
+import Image from "next/image";
+
+import { Space_Mono, Roboto_Mono } from 'next/font/google';
+
+const headerFont = Space_Mono({ subsets: ['latin'], weight: '700' });
+const itemFont = Roboto_Mono({ subsets: ['latin'] })
+
 const Footer = () => {
     return (
-        <Box as='footer' zIndex={1337} py={8}>
+        <Box as='footer' zIndex={1337} p={8}>
             <Container maxW={1280} py={8}>
                 <SimpleGrid
                     templateColumns={{ sm: '1fr 1fr', md: '2fr 1fr 1fr 2fr' }}
                     spacing={8}>
                     <Stack spacing={6}>
-                        <Box>
-                            <Text>logo here</Text>
-                        </Box>
+                        <Image width={200} src={Logo} alt='Afficone logo' />
 
-                        <Text fontSize='sm'>© 2023 Affibear. All rights reserved</Text>
+                        <Text className={itemFont.className} fontSize='sm'>© 2023 Afficone. All rights reserved</Text>
 
                         <Stack direction='row' spacing={6}>
                             <SocialButton label='Twitter' href='#'>
@@ -67,35 +73,28 @@ const Footer = () => {
                     </Stack>
 
                     <VStack alignItems='start'>
+                        <ListHeader>Products</ListHeader>
+
+                        <ListItem text='Integrations' href='/integrations' />
+                        <ListItem text='Features' href='/features' />
+                        <ListItem text='Pricing' href='/pricing' />
+                        <ListItem text='Updates' href='/updates' />
+                    </VStack>
+
+                    <VStack alignItems='start'>
                         <ListHeader>Company</ListHeader>
 
-                        <ListItem text='Pricing' href='#'/>
-                        <ListItem text='Blog' href='#'/>
-                        <ListItem text='Contact us' href='#'/>
-                        <ListItem text='About us' href='#'/>
+                        <ListItem text='Blog' href='/blog' />
+                        <ListItem text='Contact us' href='/contact' />
                     </VStack>
 
                     <VStack alignItems='start'>
                         <ListHeader>Support</ListHeader>
 
-                        <ListItem text='Help Center' href='#'/>
-                        <ListItem text='Terms of Service' href='#'/>
-                        <ListItem text='Privacy Policy' href='#'/>
-                        <ListItem text='Service Status' href='#'/>
-                    </VStack>
-
-                    <VStack alignItems='start'>
-                        <ListHeader>Stay up to date</ListHeader>
-
-                        <HStack>
-                            <Input placeholder='Your email address' />
-
-                            <IconButton
-                                colorScheme='brand'
-                                aria-label='Subscribe'
-                                icon={<FaEnvelope />}
-                            />
-                        </HStack>
+                        <ListItem text='Help Center' href='https://afficone.freshdesk.com/support/home'/>
+                        <ListItem text='Terms of Service' href='/terms'/>
+                        <ListItem text='Privacy Policy' href='/privacy'/>
+                        <ListItem text='Service Status' href='/status'/>
                     </VStack>
                 </SimpleGrid>
             </Container>

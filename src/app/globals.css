@@ -1,15 +1,8 @@
 :root {
-    --body-text: #3b3f5c;
     --gray-2: #4f5c65;
     --gray-1: #353e44;
     --gray-3: #e9eef1;
     --gray-4: #f7fafc;
-    --primary-1: #0087ee;
-    --primary-2: #0fbf95;
-    --primary-3: #041e39;
-    --success: #3cba58;
-    --warning: #ffb400;
-    --danger: #da2424;
     --white: white;
     --black: black;
 }
