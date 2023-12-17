@@ -1,4 +1,4 @@
-export const SDK = "const shop=\"[shop_id]\";async function initialize(){console.log(\"Affibear - Initializing..\");let i=new URLSearchParams(window.location.search);if(i.has(\"ref\")&&null==getCookie(\"ref\")){let e=i.get(\"ref\");setCookie(\"ref\",e,90),await fetch(`https://api.affibear.com/track/[shop_id]/${e}`)}}async function conversion(i){let e=getCookie(\"ref\");if(null==e)return;let t=await fetch(\"http://ip-api.com/json\"),n=await t.json(),o={...i,ip:n};await fetch(`https://api.affibear.com/track?aff=${e}`,{method:\"POST\",headers:{Accept:\"application/json\",\"Content-Type\":\"application/json\"},body:JSON.stringify(o)})}function getCookie(i){let e,t=document.cookie,n=i+\"=\",o=t.indexOf(\"; \"+n);if(-1===o){if(0!==(o=t.indexOf(n)))return null}else o+=2,-1===(e=document.cookie.indexOf(\";\",o))&&(e=t.length);return decodeURI(t.substring(o+n.length,e))}function setCookie(i,e,t){let n=\"\";if(t){let o=new Date;o.setTime(o.getTime()+864e5*t),n=\"; Expires=\"+o.toUTCString()}document.cookie=i+\"=\"+(e||null)+n+\"; Path=/\"}initialize(),window.affiConversion=conversion;";
+export const SDK = "const shop=\"[shop_id]\";async function initialize(){console.log(\"Afficone - Initializing..\");let i=new URLSearchParams(window.location.search);if(i.has(\"ref\")&&null==getCookie(\"ref\")){let e=i.get(\"ref\");setCookie(\"ref\",e,90),await fetch(`https://api.afficone.com/track/[shop_id]/${e}`)}}async function conversion(i){let e=getCookie(\"ref\");if(null==e)return;let t=await fetch(\"http://ip-api.com/json\"),n=await t.json(),o={...i,ip:n};await fetch(`https://api.affibear.com/track?aff=${e}`,{method:\"POST\",headers:{Accept:\"application/json\",\"Content-Type\":\"application/json\"},body:JSON.stringify(o)})}function getCookie(i){let e,t=document.cookie,n=i+\"=\",o=t.indexOf(\"; \"+n);if(-1===o){if(0!==(o=t.indexOf(n)))return null}else o+=2,-1===(e=document.cookie.indexOf(\";\",o))&&(e=t.length);return decodeURI(t.substring(o+n.length,e))}function setCookie(i,e,t){let n=\"\";if(t){let o=new Date;o.setTime(o.getTime()+864e5*t),n=\"; Expires=\"+o.toUTCString()}document.cookie=i+\"=\"+(e||null)+n+\"; Path=/\"}initialize(),window.affiConversion=conversion;";
 
 export const TOAST_OPTIONS = {
     position: 'top-right',
@@ -1247,7 +1247,7 @@ export const FLAG_CODE_TABLE = {
     ZW: "Zimbabwe",
 };
 
-const CUSTOM_SDK_CODE = '<script async src="https://affibear.com/scripts/sdk.js?shop=[site_id]"></script>';
+const CUSTOM_SDK_CODE = '<script async src="https://afficone.com/scripts/sdk.js?shop=[site_id]"></script>';
 
 const CUSTOM_SDK_CODE2 = "<script>\n" +
     "    affiConversion({\n" +

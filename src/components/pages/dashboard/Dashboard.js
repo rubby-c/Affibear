@@ -110,7 +110,7 @@ const Dashboard = ({ _data }) => {
 
     return (
         <VStack alignItems='stretch' spacing={4}>
-            <TitleCard icon={<FaStar/>} title='Welcome to Affibear' item={<Popover placement='bottom-start'>
+            <TitleCard icon={<FaStar/>} title='Welcome to Afficone' item={<Popover placement='bottom-start'>
                 <PopoverTrigger>
                     <Button size='sm' leftIcon={<FaCalendarAlt/>}
                             fontWeight='medium'>{`${GetPrettyDate(range.startDate)} - ${GetPrettyDate(range.endDate)}`}</Button>

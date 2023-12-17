@@ -18,7 +18,7 @@ const ReactMarkdown = dynamic(() => import('react-markdown'));
 const components = {
     a: props => {
         const { children } = props;
-        const external = !props.href.includes('affibear.com') && !props.href.startsWith('#');
+        const external = !props.href.includes('afficone.com') && !props.href.startsWith('#');
 
         return (
             <Link href={props.href} isExternal={external}>

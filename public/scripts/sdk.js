@@ -12,7 +12,7 @@ async function initialize() {
         const ref = params.get('ref');
 
         setCookie('ref', ref, 90);
-        await fetch(`https://api.affibear.com/track/${token}/${ref}`);
+        await fetch(`https://api.afficone.com/track/${token}/${ref}`);
     }
 }
 
@@ -32,7 +32,7 @@ async function conversion(order) {
         ip: json
     };
 
-    await fetch(`https://api.affibear.com/track/${token}/${ref}`, {
+    await fetch(`https://api.afficone.com/track/${token}/${ref}`, {
         method: 'POST',
         headers: {
             'Accept': 'application/json',
@@ -77,7 +77,7 @@ function setCookie(name, value, days) {
 }
 
 function getScriptParam(name) {
-    const tag = document.querySelector('script[src^="https://affibear.test/scripts/sdk.js"]');
+    const tag = document.querySelector('script[src^="https://afficone.test/scripts/sdk.js"]');
 
     if (tag) {
         const urlParams = new URLSearchParams(new URL(tag.getAttribute('src')).search);

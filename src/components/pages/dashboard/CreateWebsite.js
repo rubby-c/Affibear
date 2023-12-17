@@ -15,15 +15,21 @@ import {
     useToast,
     VStack
 } from "@chakra-ui/react";
-import {FaArrowRight, FaChevronLeft, FaWrench} from "react-icons/fa";
-import {CUSTOM_SDK_CODE, CUSTOM_SDK_CODE2, TOAST_OPTIONS} from "@/lib/constants";
-import {FaMagnifyingGlass} from "react-icons/fa6";
-import Api, {SendRequest} from "@/lib/api";
+
+import { FaArrowRight, FaChevronLeft, FaWrench } from "react-icons/fa";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+
+import { CUSTOM_SDK_CODE, CUSTOM_SDK_CODE2, TOAST_OPTIONS } from "@/lib/constants";
+
+import { SendRequest } from "@/lib/api";
 import hljs from "highlight.js";
+
+import 'highlight.js/styles/atom-one-dark.css';
+
 import EasyModalTitle from "@/components/elements/EasyModalTitle";
 import TitleOption from "@/components/elements/TitleOption";
 import TitleCard from "@/components/elements/TitleCard";
-import {redirect} from "next/navigation";
+import { redirect } from "next/navigation";
 
 const regex = new RegExp(/https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,8}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g);
 
@@ -76,19 +82,19 @@ const CreateWebsite = ({ _data }) => {
         prev: 'start',
         step: 'start',
         loading: false,
-        valid_url: false
+        valid_url: false,
+        url_success: false
     });
 
     const [setup, setSetup] = React.useState({
-        id: null,
-        name: '',
-        url: '',
-        prefix: '',
-        url_success: false,
+        name: 'Afficone',
+        url: 'https://afficone.com',
+        prefix: 'hello',
+        token: null,
         sdk: null
     });
 
-    async function CheckWebsite() {
+    async function CheckPrefix() {
         setState({
             ...state,
             loading: true
@@ -97,14 +103,21 @@ const CreateWebsite = ({ _data }) => {
         await SendRequest(
             toast,
             'get',
-            `/integrations/check-prefix?prefix=${setup.prefix}`,
+            `/integrations/check-prefix?prefix=${setup.prefix}&sdk=${setup.sdk}`,
             state,
-            () => setState({
-                ...state,
-                loading: false,
-                prev: state.step,
-                step: `select-sdk`
-            }),
+            (res) => {
+                setState({
+                    ...state,
+                    loading: false,
+                    prev: state.step,
+                    step: `select-sdk`
+                });
+
+                setSetup({
+                    ...setup,
+                    token: res.data.toString()
+                })
+            },
             () => setState({
                 ...state,
                 loading: false
@@ -112,14 +125,14 @@ const CreateWebsite = ({ _data }) => {
             {
                 success: {
                     title: `Success`,
-                    description: 'You have successfully updated a product.'
+                    description: 'This prefix is available!'
                 },
                 error: (err) => ({
                     title: `Error`,
                     description: err.status ?? err
                 }),
                 loading: {
-                    title: 'Updating..'
+                    title: 'Checking prefix..'
                 }
             }
         );
@@ -135,14 +148,8 @@ const CreateWebsite = ({ _data }) => {
             toast,
             'post',
             `/website/finish-setup`,
-            {
-                id: setup.id,
-                name: setup.name,
-                url: setup.url,
-                prefix: setup.prefix,
-                sdk: setup.sdk
-            },
-            () => redirect('/dashboard'),
+            setup,
+            () => window.location.reload(),
             () => setState({
                 ...state,
                 loading: false
@@ -171,17 +178,17 @@ const CreateWebsite = ({ _data }) => {
                         return (
                             <TitleCard icon={<FaWrench />} title='Create a new website' item={
                                 <Button isDisabled={!setup.url.match(regex) || setup.name === '' && setup.prefix === ''}
-                                        rightIcon={<FaArrowRight/>} onClick={CheckWebsite}>Continue</Button>
+                                        rightIcon={<FaArrowRight/>} onClick={CheckPrefix}>Continue</Button>
                             }>
                                 <Text mb={4}>We&apos;re glad to have you here! Let&apos;s start off by setting up your website.</Text>
 
                                 <VStack alignItems='stretch'>
                                     <Text>1. What&apos;s the name of your website?</Text>
-                                    <Input mb={2} placeholder='Affibear' value={setup.name}
+                                    <Input mb={2} placeholder='Afficone' value={setup.name}
                                            onChange={(e) => setSetup({ ...setup, name: e.target.value })}/>
 
                                     <Text>2. Where is your website located?</Text>
-                                    <Input mb={2} placeholder='https://affibear.com' value={setup.url}
+                                    <Input mb={2} placeholder='https://afficone.com' value={setup.url}
                                            onChange={(e) => {
                                                setSetup({
                                                    ...setup,
@@ -207,7 +214,7 @@ const CreateWebsite = ({ _data }) => {
                                                    });
                                                }} />
 
-                                        <InputRightAddon>.affibear.com</InputRightAddon>
+                                        <InputRightAddon>.afficone.com</InputRightAddon>
                                     </InputGroup>
                                     <Text fontSize={14}>* You <strong>cannot</strong> change this, but you can later use your domain.</Text>
                                 </VStack>
@@ -232,7 +239,7 @@ const CreateWebsite = ({ _data }) => {
                         return (
                             <TitleCard size='4xl' title={<EasyModalTitle title='🔧 WooCommerce Setup' icon={<FaChevronLeft />} onIconClick={() => GoTo('select-sdk')} ariaLabel='Go Back' />}>
                                 <VStack alignItems='stretch' spacing={4}>
-                                    <Text>1. Install the Affibear WordPress plugin.</Text>
+                                    <Text>1. Install the Afficone WordPress plugin.</Text>
 
                                     <span>
                                         <Link href='/plugins/wordpress-plugin.zip' download>
@@ -271,22 +278,13 @@ const CreateWebsite = ({ _data }) => {
                         )
                     case 'custom-sdk':
                         return (
-                            <TitleCard size='4xl' isOpen={isOpen} title={<HStack mb={4} spacing={4}>
+                            <TitleCard size='4xl' title={<HStack mb={4} spacing={4}>
                                 <IconButton onClick={() => GoTo('select-sdk')} variant='ghost' size='sm' icon={<FaChevronLeft />} aria-label='Go Back' />
                                 <Text fontSize={20} fontWeight='medium'>🔧 Custom SDK</Text>
-                            </HStack>} footer={
-                                <HStack w='100%' justifyContent='space-between'>
-                                    <Text>If you need a more complex integration, check out our <Link>API docs.</Link></Text>
-
-                                    <HStack spacing={4}>
-                                        <Button onClick={CheckWebsite} isDisabled={setup.url_success} colorScheme={setup.url_success ? 'brand' : 'gray'} isLoading={state.loading} loadingText='Checking..'  rightIcon={<FaMagnifyingGlass />}>Check Website</Button>
-                                        <Button onClick={FinishSetup} isDisabled={!setup.url_success || state.loading} rightIcon={<FaArrowRight />}>Finish</Button>
-                                    </HStack>
-                                </HStack>
-                            }>
+                            </HStack>}>
                                 <Text my={4}>Your unique Shoptoken is <Text as='span' fontWeight='semibold'>{setup.token ?? '...'}</Text>.</Text>
 
-                                <Text>First off, import the Affibear SDK script on your website.</Text>
+                                <Text>First off, import the Afficone SDK script on your website.</Text>
 
                                 <Box as='pre' my={4}>
                                     <code className='html' ref={x => codesRef.current[0] = x}>{CUSTOM_SDK_CODE.replace('[site_id]', setup.token)}</code>
@@ -298,7 +296,13 @@ const CreateWebsite = ({ _data }) => {
                                     <code className='html' ref={x => codesRef.current[1] = x}>{CUSTOM_SDK_CODE2}</code>
                                 </Box>
 
-                                <Text mb={4}>Once you&apos;ve imported the Affibear SDK, press the button below and we&apos;ll check if the script is on your website.</Text>
+                                <Text mb={8}>Once you&apos;ve imported the Afficone SDK, press the button below and we&apos;ll check if the script is on your website.</Text>
+
+                                <HStack w='100%' justifyContent='space-between'>
+                                    <Text>If you need a more complex integration, check out our <Link>API docs.</Link></Text>
+
+                                    <Button onClick={FinishSetup} rightIcon={<Icon as={FaArrowRight} ms={2}/>}>Complete Setup</Button>
+                                </HStack>
                             </TitleCard>
                         )
                 }

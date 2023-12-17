@@ -232,7 +232,7 @@ const Website = ({ _data }) => {
             'post',
             `/website/modify`,
             data,
-            () => localStorage.setItem('affibear-currency', data.settings.currency),
+            () => localStorage.setItem('afficone-currency', data.settings.currency),
             null,
             {
                 success: {
@@ -335,7 +335,7 @@ const Website = ({ _data }) => {
                                                });
                                            }} />
 
-                                    <InputRightAddon>.affibear.com</InputRightAddon>
+                                    <InputRightAddon>.afficone.com</InputRightAddon>
                                 </InputGroup>
 
                                 <Button onClick={ChangePrefix} px={8} leftIcon={<FaWrench />}>Change</Button>
@@ -474,7 +474,7 @@ const Website = ({ _data }) => {
 
                 <OrderedList my={4} spacing={3}>
                     <ListItem>Login to your domain provider.</ListItem>
-                    <ListItem>Add a new <Text as='span' fontWeight='medium'>CNAME</Text> DNS record pointing to <Text as='span' fontWeight='medium'>{data.prefix}.affibear.com</Text>.</ListItem>
+                    <ListItem>Add a new <Text as='span' fontWeight='medium'>CNAME</Text> DNS record pointing to <Text as='span' fontWeight='medium'>{data.prefix}.afficone.com</Text>.</ListItem>
 
                     <Image boxShadow='xs' src='/images/guides/custom_domain.png' />
                     <Text mb={4} fontSize={14} textAlign='center'>Example: Adding a DNS record in the Cloudflare dashboard.</Text>

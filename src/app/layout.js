@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 import './globals.css'
 
 export const metadata = {
-    title: 'Affibear',
+    title: 'Afficone',
     description: 'booyah'
 }
 

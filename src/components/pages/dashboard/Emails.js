@@ -418,7 +418,7 @@ const Emails = ({data}) => {
             }>
                 <TitleOption title='SMTP Configuration'
                              subtitle={<Text>Your emails are sent through <Text fontWeight='bold'
-                                                                                as='span'>{smtp.enabled ? smtp.email : 'no-reply@affibear.com'}</Text>.</Text>}>
+                                                                                as='span'>{smtp.enabled ? smtp.email : 'no-reply@afficone.com'}</Text>.</Text>}>
                     <Button my={2} onClick={() => setSmtpState({...smtpState, open: true})}
                             leftIcon={<FaWrench/>}>Configure</Button>
                 </TitleOption>

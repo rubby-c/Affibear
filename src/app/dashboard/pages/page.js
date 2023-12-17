@@ -4,14 +4,14 @@ import { cookies } from "next/headers";
 import Pages from "@/components/pages/dashboard/Pages";
 
 const Page = async () => {
-    const res = await Api.get('/website/current', {
+    const res = await Api.get('/website/settings', {
         headers: {
             Cookie: cookies().toString()
         }
     });
 
     return (
-        <Pages _data={res.data} />
+        <Pages data={res.data} />
     );
 };
 

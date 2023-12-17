@@ -2,7 +2,7 @@ import './styles.css'
 
 import Api from "../../lib/api";
 import DashboardLayout from "../../components/pages/dashboard/DashboardLayout";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 const Layout = async ({ children }) => {
@@ -16,7 +16,9 @@ const Layout = async ({ children }) => {
         redirect('/signin');
     }
 
-    if (res.data.websites.length === 0 && children.props.childProp.segment !== 'create-website') {
+    const path = headers().get('x-path');
+
+    if (res.data.websites.length === 0 && path !== '/dashboard/create-website') {
         redirect('/dashboard/create-website');
     }
 

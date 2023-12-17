@@ -90,8 +90,8 @@ const Header = ({ data, pc, sidebar }) => {
                                 icon={sidebar.isOpen ? null : <FaChevronUp/>} isDisabled={sidebar.isOpen}
                                 aria-label='Collapse Sidebar'/>}
 
-            <HStack w='100%' justifyContent={data.websites[0]?.active ? 'end' : 'space-between'} spacing={8}>
-                {!data.websites[0]?.active && <NextLink href='/dashboard/website'>
+            <HStack w='100%' justifyContent={data.websites.length > 0 && !data.websites[0].active ? 'space-between' : 'end'} spacing={8}>
+                {data.websites.length > 0 && !data.websites[0].active && <NextLink href='/dashboard/website'>
                     <Tag colorScheme='red'>DISABLED</Tag>
                 </NextLink>}
 

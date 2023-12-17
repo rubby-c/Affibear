@@ -45,6 +45,8 @@ const Auth = () => {
 
         if (res.status === 200) {
             await router.push('/dashboard');
+        } else if (res.status === 204) {
+            await router.push('/dashboard/create-website');
         }
         else {
             toast({
@@ -93,7 +95,7 @@ const Auth = () => {
                     <Button onClick={Process} w='100%'>Continue</Button>
                 </Box>
 
-                <Text textAlign='center' fontWeight='medium'>New to Affibear? <Link as={NextLink} href='/signup' variant='jumpy'>Sign Up</Link></Text>
+                <Text textAlign='center' fontWeight='medium'>New to Afficone? <Link as={NextLink} href='/signup' variant='jumpy'>Sign Up</Link></Text>
             </Box>
         </Box>
     );

@@ -108,7 +108,7 @@ const Auth = () => {
 
                         <Button onClick={Process} mb={4} w='100%'>Create Account</Button>
 
-                        <Text fontSize={12}>By signing up you agree to Affibear&apos;s <Link as={NextLink} href='/terms'>Terms of Service</Link> and <Link as={NextLink} href='/privacy'>Privacy Policy</Link>.</Text>
+                        <Text fontSize={12}>By signing up you agree to Afficone&apos;s <Link as={NextLink} href='/terms'>Terms of Service</Link> and <Link as={NextLink} href='/privacy'>Privacy Policy</Link>.</Text>
                     </Box>
 
                     <Text textAlign='center' fontWeight='medium'>Have an account? <Link as={NextLink} href='/signin' variant='jumpy'>Sign In</Link></Text>

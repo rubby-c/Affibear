@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import {Button, Heading, Icon, Input, Textarea, useToast, VStack} from "@chakra-ui/react";
+import {Button, Heading, Icon, Input, Link, Text, Textarea, useToast, VStack} from "@chakra-ui/react";
 import TitleOption from "@/components/elements/TitleOption";
 import { FaArrowRight } from "react-icons/fa";
 import Api, { SendRequest } from "@/lib/api";
 
 import { TOAST_OPTIONS } from "@/lib/constants";
+import Tip from "@/components/elements/Tip";
 
 const Contact = () => {
     const toast = useToast(TOAST_OPTIONS);
@@ -50,7 +51,9 @@ const Contact = () => {
 
     return (
         <VStack maxW='384px' mx='auto' alignItems='stretch' spacing={4}>
-            <Heading textAlign='center' as='h1'>Contact Us</Heading>
+            <Tip title='Need support?' content={<Text fontWeight='medium'>Check out our <Link href='https://afficone.freshdesk.com/support/home'>Help Desk</Link>!</Text>}/>
+
+            <Heading mt={8} textAlign='center' as='h1'>Contact Us</Heading>
 
             <TitleOption title='Email'>
                 <Input type='email' value={email} onChange={(e) => setEmail(e.target.value)} placeholder='example@email.com' />

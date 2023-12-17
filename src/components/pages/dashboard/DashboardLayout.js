@@ -79,7 +79,7 @@ const DashboardLayout = ({ data, children }) => {
     const sidebar = useDisclosure();
 
     React.useEffect(() => {
-        localStorage.setItem('affibear-currency', data.currency);
+        localStorage.setItem('afficone-currency', data.currency);
     },[]);
 
     return (
@@ -97,7 +97,7 @@ const DashboardLayout = ({ data, children }) => {
                     </Modal>
                 }
 
-                <VStack w='100%' h='100%' spacing={0}>
+                <VStack w='100%' h='100%' minH='75vh' spacing={0}>
                     <Header data={data} pc={isComputer} sidebar={sidebar} />
 
                     <Box as='main' w='100%' p={4}>

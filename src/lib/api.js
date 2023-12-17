@@ -38,7 +38,7 @@ export async function SendRequest(toast, method, url, data, onSuccess = null, on
             resolve();
         } else {
             if (onError !== null)
-                onError(res);
+                onError(res.data);
 
             reject(res.data.status ?? res.data);
         }

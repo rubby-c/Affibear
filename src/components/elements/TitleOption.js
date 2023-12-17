@@ -1,9 +1,9 @@
 import React from 'react';
 import {Box, Text} from "@chakra-ui/react";
 
-const TitleOption = ({ w, sub, title, subtitle, category, children }) => {
+const TitleOption = ({ w, as, sub, title, subtitle, category, children }) => {
     return (
-        <Box w={w}>
+        <Box w={w} as={as}>
             {category && <Text mb={4} fontSize={18} fontWeight='bold'>{category}</Text>}
 
             <Text fontSize={sub ? 14: 16} fontWeight='medium' mb={subtitle ? 0 : 2}>{title}</Text>

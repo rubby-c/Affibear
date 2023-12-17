@@ -54,7 +54,7 @@ const isNode = typeof localStorage === 'undefined';
 export function GetCurrency() {
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: isNode ? 'USD' : localStorage.getItem('affibear-currency'),
+        currency: isNode ? 'USD' : localStorage.getItem('afficone-currency'),
         maximumFractionDigits: 0
     });
 
@@ -64,7 +64,7 @@ export function GetCurrency() {
 export function GetNumber(num) {
     const formatter = new Intl.NumberFormat('en-US', {
         style: 'currency',
-        currency: isNode ? 'USD' : localStorage.getItem('affibear-currency') ?? 'USD',
+        currency: isNode ? 'USD' : localStorage.getItem('afficone-currency') ?? 'USD',
     });
 
     return (
